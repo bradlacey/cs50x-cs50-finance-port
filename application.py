@@ -1,6 +1,6 @@
-from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_session import Session
+from flask_sqlalchemy import SQLAlchemy
 from passlib.apps import custom_app_context as pwd_context
 from passlib.context import CryptContext
 from tempfile import mkdtemp
@@ -9,10 +9,47 @@ from tempfile import mkdtemp
 from decimal import *
 from helpers import *
 
+import os
 import time
 
 # configure application
 app = Flask(__name__)
+
+# added from "Publishing Your Flask App to the Web (PYFAW)"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+db = SQLAlchemy(app)
+
+class Users(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    hash = db.Column(db.String(80), unique=False, nullable=False)
+    cash = db.Column(db.Numeric, default=10000, precision=8, nullable=False))
+
+    def __init__(self, name):
+        self.name = name
+
+# I assume I just repeat this for each database!?
+class History(db.Model):
+    id = db.Column(db.Integer)
+    purchase_datetime = db.Column(db.DateTime, nullable=False)
+    purchase_price = db.Column(db.Numeric, precision=8, nullable=False)
+    quantity = db.Column(db.Integer, unique=False, nullable=False)
+    stock = db.Column(db.String(80), unique=False, nullable=False)
+    type = db.Column(db.String(12), unique=False, nullable=False)
+
+    def __init__(self, name):
+        self.name = name
+
+class Portfolio(db.Model):
+    id = db.Column(db.Integer, nullable=False)
+    stock = db.Column(db.String(80), unique=True, nullable=False)
+    symbol = db.Column(db.String(80), unique=True, nullable=False)
+    quantity = db.Column(db.Integer, unique=False, nullable=False
+
+    def __init__(self, name):
+        self.name = name
 
 # ensure responses aren't cached # so that we get fresh data every time
 if app.config["DEBUG"]:
@@ -32,9 +69,6 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# configure CS50 Library to use SQLite database
-db = SQL("sqlite:///finance.db")
-
 # global
 stock_names = []
 
@@ -42,13 +76,21 @@ stock_names = []
 @login_required
 def index():
     id = session.get("user_id")
-    
+
+
+
+    ## UP TO HERE
+
+    ## NEXT STEP: CONVERT ALL db.execute calls to SQLAlchemy!
+
+
+
     cash_in = db.execute("SELECT cash FROM users WHERE id = :id", id = id)
     cash = round(cash_in[0]['cash'], 2)
     grand_total = 0.0
     portfolio = 0.0
     stocks = db.execute("SELECT symbol, stock, quantity FROM portfolio WHERE id = :id", id = id)
-    
+
     for stock in stocks:
         temp = lookup(stock['symbol'])
         stock['current_price'] = temp['price']
@@ -68,12 +110,12 @@ def index():
 @login_required
 def account():
     id = session.get("user_id") # id = session['user_id']
-    
+
     if request.method == "POST":
         # ensure old password was submitted
         if not request.form.get("password"):
             return apology("must provide new password")
-            
+
         # ensure new password was submitted
         if not request.form.get("password"):
             return apology("must provide new password")
@@ -87,11 +129,11 @@ def account():
             # nothin'
         # else:
             return apology("new passwords do not match")
-            
+
         rows = db.execute("SELECT cash, hash, username FROM users WHERE id = :id", id = id)
         username = rows[0]['username']
         cash = round(rows[0]['cash'], 2)
-        
+
         # ensure username exists and password is correct
         if len(rows) != 1 or not pwd_context.verify(request.form.get("password_old"), rows[0]["hash"]):
             return apology("you have entered your old password incorrectly")
@@ -101,19 +143,19 @@ def account():
         db.execute("UPDATE users SET hash = :hash WHERE id = :id", hash = hash, id = id)
         # return apology(str(hash))
         return render_template("account.html", username = username)
-        
+
     else:
         # CONTENT
         rows = db.execute("SELECT username FROM users WHERE id = :id", id = id)
         username = rows[0]['username']
         return render_template("account.html", username = username)
 
-    
+
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
     """Buy shares of stock."""
-    
+
     id = session.get("user_id")
     if id == None:
         return apology("please log in")
@@ -122,11 +164,11 @@ def buy():
         stock = request.form.get("stock")
         stock = stock.upper()
         information = lookup(stock)
-        
+
         quantity = request.form.get("quantity")
         total_owned = 0
         type = "purchase"
-        
+
         rows = db.execute("SELECT cash FROM users WHERE id = :id", id = id)
         cash = round(rows[0]['cash'], 2)
         # ensure valid submission
@@ -143,7 +185,7 @@ def buy():
         price = round(information['price'], 2)
         symbol = information['symbol']
         cost = round(float(price), 2) * round(float(quantity), 2)
-        
+
         # check that the user can afford the quantity requested
         if cost > cash:
             return apology("account balance too low for purchase")
@@ -154,18 +196,18 @@ def buy():
         cash -= round(cost, 2)
         test = db.execute("SELECT * FROM portfolio WHERE id = :id AND symbol = :symbol", id = id, symbol = symbol)
         if len(test) == 0:
-            db.execute("INSERT INTO portfolio (id, quantity, stock, symbol) VALUES (:id, :quantity, :stock_name, :symbol)", id = id, quantity = int(quantity), stock_name = stock_name, symbol = symbol)        
+            db.execute("INSERT INTO portfolio (id, quantity, stock, symbol) VALUES (:id, :quantity, :stock_name, :symbol)", id = id, quantity = int(quantity), stock_name = stock_name, symbol = symbol)
         # else, if it's there
         else:
             db.execute("UPDATE portfolio SET quantity = quantity + :quantity WHERE id = :id AND stock = :stock_name AND symbol = :symbol", quantity = int(quantity), id = id, stock_name = stock_name, symbol = symbol)
-        
+
         # populate list of (dicts of) all stocks / quantity owned by current user
         stocks = db.execute("SELECT symbol, stock, quantity FROM portfolio WHERE id = :id", id = id)
-        
+
         portfolio = 0.0
         grand_total = 0.0
-        
-        
+
+
         # update history
         db.execute("INSERT INTO history (id, stock, quantity, purchase_price, type) VALUES (:id, :symbol, :quantity, :purchase_price, :type)", id = id, symbol = symbol, quantity = quantity, purchase_price = price, type = type)
         for stock in stocks:
@@ -185,62 +227,62 @@ def buy():
 
         # debugging: we never get to this point
         # debugging: oop, we did just get to this point...
-        # return apology("here?") 
-        
+        # return apology("here?")
+
         # update grand total
         grand_total = round(portfolio, 2) + round(cash, 2)
-        
+
         # USD things
         # stock['current_price'] = usd(stock['current_price'])
         # stock['value'] = usd(stock['value'])
-        
-        
+
+
         # adjust user's cash holdings
         # ? ? ?
         # from here: https://stackoverflow.com/questions/6699360/flask-sqlalchemy-update-a-rows-information
         # user = users.query.get(5)
-        # user.name = 'New 
+        # user.name = 'New
         # db.session.commit()
-        
-        
+
+
         # return apology(str(cash))
         # return apology(usd(cash))
 
         # variable to control index.html
         buying = True
-        
+
         # debugging: we never get to this point
-        # return apology("here?") 
+        # return apology("here?")
         # return redirect(url_for("index")) #, balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, type = type)
         return render_template("index.html", balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, type = type)
-        
-        
+
+
     # load page as normal
     else:
         return render_template("buy.html")
-            
-            
+
+
 @app.route("/history")
 @login_required
 def history():
     """Show history of transactions."""
-    
+
     id = session.get("user_id") # id = session['user_id']
     # use distinct so that rows contains no duplicates
     rows = db.execute("SELECT * FROM history WHERE id = :id", id = id)
     stocks = db.execute("SELECT DISTINCT stock FROM history WHERE id = :id", id = id)
     current_prices = {}
-    
+
     # counter_if = 0
     # counter_el = 0
-    
+
     for stock in stocks:
         temp = lookup(stock['stock'])
         current_prices[stock['stock']] = usd(float(format(round(temp['price'], 2), '.2f')))
-        
+
     for row in rows:
         row['purchase_price'] = usd(float(format(round(row['purchase_price'], 2), '.2f')))
-    
+
     return render_template("history.html", rows = rows,  current_prices = current_prices)
     # if error:
     return apology("TODO")
@@ -265,7 +307,7 @@ def login():
             return apology("must provide password")
 
         username = request.form.get("username")
-        
+
         # query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username", username = username)
 
@@ -297,35 +339,35 @@ def logout():
 
 @app.route("/password_reset", methods=["GET", "POST"])
 def password_reset():
-    
+
     # CONTENT
     id = session.get("user_id") # id = session['user_id']
-    
+
     if request.method == "POST":
-        
+
         # CONTENT
         return apology("soz")
-        
+
     else:
         # CONTENT
         return render_template("password_reset.html")
-        
-        
+
+
 @app.route("/quote", methods=["GET", "POST"])
 @login_required
 def quote():
     """Get stock quote."""
-    
+
     id = session.get("user_id") # id = session['user_id']
-    
+
     # WT: For quote we have three to-dos
-    
+
     # WT: display the form for the user to look up the stock
-    
+
     # WT: retrieve the quote for the stock
-    
+
     # WT: display the current price for the stock
-    
+
     # if user reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
@@ -335,17 +377,17 @@ def quote():
         # symbol = information.symbol     # stock should == symbol though, right?
 
         # print(name, price, symbol)
-        
-        
-        
+
+
+
         stock = request.form.get("stock")
-        
+
         # ensure stock was submitted
         if stock == None:
             return apology("must provide stock to look up")
-        
+
         information = lookup(stock)
-        
+
         # ensure stock code is valid
         if information == None:
             return apology("must provide a valid stock symbol")
@@ -357,11 +399,11 @@ def quote():
             price = information['price']
             # symbol = information[row[0].upper()] # symbol
             symbol = information['symbol']
-            
-            # print(name, price, symbol)  
+
+            # print(name, price, symbol)
 
         # return redirect("http://www.google.com")
-            
+
 
         # do I need to do this?
         # WT:
@@ -372,18 +414,18 @@ def quote():
 
     # else if user reached route via GET (as by clicking a link or via redirect)
     # When a user visits /quote via GET, render one of those templates, inside of
-    # which should be an HTML form that submits to /quote via POST. 
+    # which should be an HTML form that submits to /quote via POST.
     else:
         return render_template("quote.html")  # , name = name, price = price, symbol = symbol)
-    
-    
+
+
     return apology("no stock with the code ____ exists")
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user."""
-    
+
     # forget any user_id
     session.clear()
 
@@ -393,7 +435,7 @@ def register():
         # ensure username was submitted
         if not request.form.get("username"):
             return apology("must provide username")
-        
+
         # ensure email address was submitted
         if not request.form.get("email"):
             return apology("must provide email address")
@@ -411,7 +453,7 @@ def register():
         # "this adds to [your] database session so to speak" ...okay
         # db.session.add(user)
         # db.session.commit()
-        
+
         # ensure password is correct
         # not working for unknown reasons so...
         # if (pwd_context.verify(request.form.get("password"), request.form.get("password_confirmed"), user=request.form.get("username"))) == False:
@@ -446,7 +488,7 @@ def register():
         # return apology(str(result))
         # session['user_id'] = result[0]['id']
         session['user_id'] = result
-        
+
         # redirect user to home page
         # TemplateNotFound error
         # return redirect(url_for("index"))
@@ -458,25 +500,25 @@ def register():
     # else if user reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("register.html")
-    
+
 
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
     """Sell shares of stock."""
-    
+
     id = session.get("user_id") # id = session['user_id']
     type = "sale"
 
     if request.method == "POST":
-            
+
         # get stock request from user; look up price
         stock = request.form.get("stock")
         stock = stock.upper()
         quantity = request.form.get("quantity")
         quantity_on_hand = 0
         information = lookup(stock)
-        
+
         if id == None:
             """
             i = 0
@@ -492,9 +534,9 @@ def sell():
         # debugging
         # return apology(str(type(rows_portfolio)))
         quantity_on_hand = rows_portfolio[0]['quantity']
-        
-        
-        
+
+
+
         # ensure stock was submitted
         if stock == None:
             return apology("must provide valid stock symbol")
@@ -511,9 +553,9 @@ def sell():
         name = information['name']
         price = round(information['price'], 2)
         symbol = information['symbol']
-        
+
         sale_value = round(float(price), 2) * round(float(quantity), 2)
-        
+
         # check that the user has enough of the stock to sell
         if quantity > quantity_on_hand or quantity_on_hand == None:
             return apology("you cannot sell that which you do not own")
@@ -524,10 +566,10 @@ def sell():
 
         # remove shares from user's portfolio
         db.execute("UPDATE portfolio SET quantity = quantity - :quantity WHERE id = :id AND stock = :stock AND symbol = :symbol", quantity = int(quantity), id = id, stock = stock, symbol = symbol)
-        
+
         # populate list of (dicts of) all stocks / quantity owned by current user
         stocks = db.execute("SELECT stock, quantity FROM portfolio WHERE id = :id", id = id)
-        
+
         portfolio = 0.0
         grand_total = 0.0
 
@@ -541,10 +583,10 @@ def sell():
             stock['current_price'] = temp['price']
             stock['symbol'] = temp['symbol']
             stock['name'] = temp['name']
-            
+
             # make new 'value' key for each stock
             stock['value'] = stock['current_price'] * float(stock['quantity'])
-            
+
             # update grand_total
             portfolio += stock['value']
             stock['current_price'] = usd(stock['current_price'])
@@ -552,21 +594,21 @@ def sell():
 
         # update grand total
         grand_total = portfolio + cash
-        
+
         # variable to control index.html
         selling = True
-        
+
         return render_template("index.html", balance = usd(cash), cost = usd(sale_value), grand_total = usd(grand_total), portfolio = usd(portfolio), quantity = quantity, selling = selling, stocks = stocks, symbol = symbol)
-    
+
     # else if GET: load page as normal
     else:
         return render_template("sell.html")
-    
+
 
 @app.route("/success")
 def success():
     """Declare registration success."""
-    
+
     id = session.get("user_id") # id = session['user_id']
 
     return render_template("success.html")
