@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Your Account
+{% endblock %}
+
+{% block main %}
+
+    {# original source: https://www.w3schools.com/howto/howto_js_toggle_hide_show.asp #}
+    <div id = "password_change_button">
+        <button class = "btn btn-primary btn-lg outline sharp" onclick="myFunction()">Change Password?</button>
+        <br/>
+        <br/>
+    </div>
+    
+    <div id="password_change">
+        
+        <div class="current_user">
+            <div class="message">
+                Current user:
+                <br/>
+                <h2 class="display-4">{{username}}</h2>
+            </div>
+            <br/>
+            <div class = "text-danger">
+                <i>Not you?</i>
+                <br/>
+                <a href="{{ url_for('logout') }}">Click here to log out</a>.
+                <br/>
+                <br/>
+            </div>
+        </div>
+        
+        <form action="{{ url_for('account') }}" method="post">
+            <fieldset>
+                
+                <div class="form-group">
+                    <input class="form-control" autocorrect="off" autocapitalize="off" spellcheck="false" name="password_old" placeholder="Old Password" type="password"/>
+                </div>
+                <div class="form-group">
+                    <input class="form-control" autocorrect="off" autocapitalize="off" spellcheck="false" name="password" placeholder="New Password" type="password"/>
+                </div>
+                <div class="form-group">
+                    <input class="form-control" autocorrect="off" autocapitalize="off" spellcheck="false" name="password_confirmed" placeholder="New Password (again)" type="password"/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default" type="submit">Submit</button>
+                </div>
+                
+            </fieldset>
+        </form>
+    </div>
+        
+    <script>
+        function myFunction()
+        {
+            var x = document.getElementById("password_change");
+            if (x.style.display === "block")
+            {
+                x.style.display = "none";
+            }
+            else
+            {
+                x.style.display = "block";
+            }
+        }
+    </script>
+
+{% endblock %}
+
+

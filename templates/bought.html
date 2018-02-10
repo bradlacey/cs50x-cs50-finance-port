@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Your Receipt
+{% endblock %}
+
+{% block main %}
+    <div class = "container-fluid">
+        <table class="table table-hover text-centered">
+            <tr>
+                <td id = "td_02">name: </td>
+                <td id = "td_02">{{name}}</td>
+            </tr>
+            <tr>
+                <td id = "td_02">symbol: </td>
+                <td id = "td_02">{{symbol}}</td>
+            </tr>
+            <tr>
+                <td id = "td_02">price: </td>
+                <td id = "td_02">{{price}}</td>
+            </tr>
+            <tr>
+                <td id = "td_02">number purchased: </td>
+                <td id = "td_02">{{quantity}}</td>
+            </tr>
+            <tr>
+                <td id = "td_02">remaining balance: </td>
+                <td id = "td_02">{{balance}}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

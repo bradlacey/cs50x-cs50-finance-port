@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+    <div class = "container-fluid">
+        <table class = "table table-hover table-sm text-centered">
+            <thead class = "thead-inverse">
+                <tr>
+                    <td id = "td_06"><b>Stock Symbol</b></td>
+                    {# <td id = "td_06"><b>Stock Name</b></td> #}
+                    <td id = "td_06"><b>Quantity</b></td>
+                    <td id = "td_06"><b>Transaction Type</b></td>
+                    <td id = "td_06" class = "layout_al_r"><b>Current Price</b></td>
+                    <td id = "td_06" class = "layout_al_r"><b>Purchase Price</b></td>
+                    <td id = "td_06" class = "layout_al_r"><b>Purchase Dat / Timee</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    {# <td id = "td_06">{{row.symbol}}</td> #}
+                    <td id = "td_06">{{row.stock}}</td>
+                    <td id = "td_06">{{row.quantity}}</td>
+                    <td id = "td_06">{{row.type}}</td>
+                    <td id = "td_06" class = "layout_al_r">{{current_prices[row.stock]}}</td>
+                    <td id = "td_06" class = "layout_al_r">{{row.purchase_price}}</td>
+                    <td id = "td_06" class = "layout_al_r">{{row.purchase_datetime}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br/>
+        <br/>
+    </div>
+{% endblock %}

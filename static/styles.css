@@ -1,0 +1,259 @@
+#td_04
+{
+    width: 25%;
+}
+
+#force_lower
+{
+    text-transform: lowercase;
+}
+
+#force_upper
+{
+    text-transform: uppercase;
+}
+
+#password_change
+{
+    display: none;
+}
+
+#stock_ticker
+{
+    display: none;
+    /* visibility: hidden; */
+    /* visibility: visible; */
+}
+
+.container
+{
+    /* center contents */
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.body_display
+{
+    text-align: center;    
+}
+
+.btn.outline
+{
+	background: none;
+	padding: 12px 22px;
+}
+
+.btn-primary.outline
+{
+	border: 2px solid #0099cc;
+	color: #0099cc;
+}
+
+.btn-primary.outline:hover, .btn-primary.outline:focus, .btn-primary.outline:active, .btn-primary.outline.active, .open > .dropdown-toggle.btn-primary
+{
+	color: #33a6cc;
+	border-color: #33a6cc;
+}
+
+.btn-primary.outline:active, .btn-primary.outline.active {
+	border-color: #007299;
+	color: #007299;
+	box-shadow: none;
+}
+
+.btn.sharp
+{
+    border-radius: 0;
+}
+
+.layout_al_l
+{
+    text-align: left;
+}
+
+.layout_al_r
+{
+    text-align: right;
+}
+
+/* colors for navbar */
+.navbar-default .navbar-brand .blue
+{
+    color: #537fbe;
+}
+
+.navbar-default .navbar-brand .red
+{
+    color: #ea433b;
+}
+
+.navbar-default .navbar-brand .yellow
+{
+    color: #f5b82e;
+}
+
+.navbar-default .navbar-brand .green
+{
+    color: #2e944b;
+}
+
+.table
+{
+    border-radius: 5px;
+    width: 100%;
+    margin: 0px auto;
+    /* float: none; */
+}
+
+input
+{ 
+    text-transform: uppercase;
+}
+
+::-webkit-input-placeholder
+{ /* WebKit browsers */
+    text-transform: none;
+}
+
+:-moz-placeholder           /* Mozilla Firefox 4 to 18 */
+{ 
+    text-transform: none;
+}
+
+::-moz-placeholder          /* Mozilla Firefox 19+ */
+{
+    text-transform: none;
+}
+
+:-ms-input-placeholder      /* Internet Explorer 10+ */
+{
+    text-transform: none;
+}
+
+::placeholder               /* Recent browsers */
+{
+    text-transform: none;
+}
+
+input[name=email]
+{
+    text-transform: none;
+}
+
+input[name=username]
+{
+    text-transform: none;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button
+{ 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+main .form-control
+{
+    /* center form controls */
+    display: inline-block;
+
+    /* override Bootstrap's 100% width for form controls */
+    width: auto;
+}
+
+main img
+{
+    /* constrain images on small screens */
+    max-width: 100%;
+}
+
+main td
+{
+    /* align: center; */
+    /* left-align tables' cells */
+    text-align: left;
+}
+
+td
+{
+    margin: 6px;
+    padding: 6px;
+}
+
+
+
+/* original source: https://stackoverflow.com/questions/18036315/centering-bootstrap-input-fields */
+.col-centered
+{
+    margin: 0 auto;
+    float: none;
+}
+
+
+
+
+/* CSS Marquee Ticker Code */
+/* original source: https://codepen.io/lewismcarey/pen/GJZVoG */
+@-webkit-keyframes ticker {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
+  }
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+@keyframes ticker {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
+  }
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+.ticker-wrap {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  overflow: hidden;
+  height: 4rem;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding-left: 100%;
+}
+
+.ticker {
+  display: inline-block;
+  height: 4rem;
+  line-height: 4rem;
+  white-space: nowrap;
+  padding-right: 100%;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -webkit-animation-name: ticker;
+  animation-name: ticker;
+  -webkit-animation-duration: 30s;
+  animation-duration: 30s;
+}
+.ticker__item {
+  display: inline-block;
+  padding: 0 2rem;
+  font-size: 2rem;
+  color: white;
+}
+
+body {
+  padding-bottom: 5rem;
+}
+
+h1, h2, p {
+  padding: 0 5%;
+}
+

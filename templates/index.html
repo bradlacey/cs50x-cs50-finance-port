@@ -1,0 +1,119 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    C$50 Finance
+{% endblock %}
+
+{% block main %}
+
+    {% if stocks is defined %}
+        <div class = "container-fluid">
+            <table class = "table table-hover table-sm text-centered">
+                <thead class = "thead-inverse">
+                    <tr>
+                        <th id = "td_06"><b></b></th>
+                        <th id = "td_06"><b>Stock Symbol</b></th>
+                        {% if selling is defined %}
+                            <th id = "td_06"><b>Shares Sold</b></th>
+                        {% elif buying is defined %}
+                            <th id = "td_06"><b>Shares Purchased</b></th>
+                        {% else %}
+                            <th id = "td_06"><b>--</b></th>
+                        {% endif %}
+                        <th id = "td_06"><b>Shares Owned</b></th>
+                        <th id = "td_06" class = "layout_al_r"><b>Current Price</b></th>
+                        <th id = "td_06" class = "layout_al_r"><b>TOTAL VALUE</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in stocks %}
+                    <tr>
+                        <td id = "td_06"></td>
+                        <td id = "td_06">{{stock.symbol}}</td>
+                        <td id = "td_06">
+                            {% if symbol is defined %}
+                                {% if stock.symbol == symbol %}
+                                    {{quantity}}
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td id = "td_06">{{stock.quantity}}</td>
+                        <td id = "td_06" class = "layout_al_r">{{stock.current_price}}</td>
+                        <td id = "td_06" class = "layout_al_r">{{stock.value}}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td id = "td_06"><br/></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                    </tr>
+                    <tr>
+                        {% if buying is defined %}
+                            <td id = "td_06">COST of CURRENT PURCHASE)</td>
+                        {% elif selling is defined %}
+                            <td id = "td_06">VALUE CASHED OUT</td>
+                        {% else %}
+                            <td id = "td_06"></td>
+                        {% endif %}
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        {% if buying is defined %}
+                            <td id = "td_06" class = "layout_al_r">{{cost}}</td>
+                        {% elif selling is defined %}
+                            <td id = "td_06" class = "layout_al_r">{{cost}}</td>
+                        {% else %}
+                            <td id = "td_06"></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td id = "td_06"><br/></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                    </tr>
+                    <tr>
+                        <td id = "td_06">REMAINING BALANCE</td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06" class = "layout_al_r"></td>
+                        <td id = "td_06" class = "layout_al_r">{{balance}}</td>
+                    </tr>
+                    <tr>
+                        <td id = "td_06">PORTFOLIO VALUE</td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06" class = "layout_al_r"></td>
+                        <td id = "td_06" class = "layout_al_r">{{portfolio}}</td>
+                    </tr>
+                    <tr>
+                        <td id = "td_06"><b>GRAND TOTAL</b></td>
+                        <td id = "td_06"></td>
+                        <td id = "td_06">{{stocks.quantity}}</td>
+                        <td id = "td_06">{{total_owned}}</td>
+                        <td id = "td_06" class = "layout_al_r"></td>
+                        <td id = "td_06" class = "layout_al_r">{{grand_total}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <h1>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            hello, {{username}}
+        </h1>
+    {% endif %}
+
+{% endblock %}
