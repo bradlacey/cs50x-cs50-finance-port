@@ -28,11 +28,10 @@ class Users(db.Model):
     hash = db.Column(db.String(80), unique=False, nullable=False)
     cash = db.Column(db.Numeric, default=10000, nullable=False)
 
-    def __init__(self, email, username, hash, cash):
+    def __init__(self, email, username, hash):
         self.email = email
         self.username = username
         self.hash = hash
-        self.cash = cash
 
 # okay, so this is all about setting up a Pythonic model to represent (mirror)
 # the structure of our database
