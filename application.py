@@ -26,7 +26,7 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     hash = db.Column(db.String(80), unique=False, nullable=False)
-    cash = db.Column(db.Numeric, default=10000, precision=8, nullable=False)
+    cash = db.Column(db.Numeric, default=10000, nullable=False)
 
     def __init__(self, name):
         self.name = name
@@ -43,7 +43,7 @@ class Users(db.Model):
 class History(db.Model):
     id = db.Column(db.Integer)
     purchase_datetime = db.Column(db.DateTime, nullable=False)
-    purchase_price = db.Column(db.Numeric, precision=8, nullable=False)
+    purchase_price = db.Column(db.Numeric, nullable=False)
     quantity = db.Column(db.Integer, unique=False, nullable=False)
     stock = db.Column(db.String(80), unique=False, nullable=False)
     type = db.Column(db.String(12), unique=False, nullable=False)
