@@ -26,7 +26,7 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     hash = db.Column(db.String(80), unique=False, nullable=False)
-    cash = db.Column(db.Numeric, default=10000, precision=8, nullable=False))
+    cash = db.Column(db.Numeric, default=10000, precision=8, nullable=False)
 
     def __init__(self, name):
         self.name = name
