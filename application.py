@@ -28,8 +28,11 @@ class Users(db.Model):
     hash = db.Column(db.String(80), unique=False, nullable=False)
     cash = db.Column(db.Numeric, default=10000, nullable=False)
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, email, username, hash, cash):
+        self.email = email
+        self.username = username
+        self.hash = hash
+        self.cash = cash
 
 # okay, so this is all about setting up a Pythonic model to represent (mirror)
 # the structure of our database
@@ -49,8 +52,13 @@ class History(db.Model):
     stock = db.Column(db.String(80), unique=False, nullable=False)
     type = db.Column(db.String(12), unique=False, nullable=False)
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, id, purchase_datetime, purchase_price, quantity, stock, type):
+        self.id = id
+        self.purchase_datetime = purchase_datetime
+        self.purchase_price = purchase_price
+        self.quantity = quantity
+        self.stock = stock
+        self.type = type
 
 class Portfolio(db.Model):
     uid = db.Column(db.Integer, primary_key=True)
@@ -59,8 +67,11 @@ class Portfolio(db.Model):
     stock = db.Column(db.String(80), unique=True, nullable=False)
     symbol = db.Column(db.String(80), unique=True, nullable=False)
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, id, quantity, stock, symbol):
+        self.id = id
+        self.quantity = quantity
+        self.stock = stock
+        self.symbol = symbol
 
 # ensure responses aren't cached # so that we get fresh data every time
 if app.config["DEBUG"]:
@@ -554,6 +565,10 @@ def register():
         # apparently this is the correct way:
         # raw SQL
         # result = db.execute("INSERT INTO users (email, username, hash) VALUES (:email, :username, :hash)", email = request.form.get("email"), username = request.form.get("username"), hash = hash)
+        # new_entry = Users()
+        # new_entry.email = request.form.get("email")
+        # new_entry.username = request.form.get("username")
+        # new_entry.hash = hash
         new_entry = Users(request.form.get("email"), request.form.get("username"), hash)
         db.session.add(new_entry)
         db.session.commit()
