@@ -554,7 +554,7 @@ def register():
         # apparently this is the correct way:
         # raw SQL
         # result = db.execute("INSERT INTO users (email, username, hash) VALUES (:email, :username, :hash)", email = request.form.get("email"), username = request.form.get("username"), hash = hash)
-        new_entry = Users(email = request.form.get("email"), username = request.form.get("username"), hash = hash)
+        new_entry = Users(request.form.get("email"), request.form.get("username"), hash)
         db.session.add(new_entry)
         db.session.commit()
         if not result:
