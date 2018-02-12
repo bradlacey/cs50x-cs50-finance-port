@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from passlib.apps import custom_app_context as pwd_context
 from passlib.context import CryptContext
 from tempfile import mkdtemp
+from sqlalchemy import and_
 
 # why wouldn;t tbis just be 'import helpers'?
 from decimal import *
@@ -30,7 +31,15 @@ class Users(db.Model):
     def __init__(self, name):
         self.name = name
 
-# I assume I just repeat this for each database!?
+# okay, so this is all about setting up a Pythonic model to represent (mirror)
+# the structure of our database
+# ergo:
+# we can use the Class / table structure below--
+# History       <- our class
+# history       <- our table (in our database)
+# --to insert things into the latter using the former, e.g.:
+# brad_lacey_history = History([DATETIME??], ...)
+# (I think the above syntax is right...see compose.com tutorial though)
 class History(db.Model):
     id = db.Column(db.Integer)
     purchase_datetime = db.Column(db.DateTime, nullable=False)
@@ -44,9 +53,9 @@ class History(db.Model):
 
 class Portfolio(db.Model):
     id = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, unique=False, nullable=False)
     stock = db.Column(db.String(80), unique=True, nullable=False)
     symbol = db.Column(db.String(80), unique=True, nullable=False)
-    quantity = db.Column(db.Integer, unique=False, nullable=False
 
     def __init__(self, name):
         self.name = name
@@ -85,11 +94,22 @@ def index():
 
 
 
-    cash_in = db.execute("SELECT cash FROM users WHERE id = :id", id = id)
+    # raw SQL
+    # cash_in = db.execute("SELECT cash FROM users WHERE id = :id", id = id)
+    # ORM
+    cash_in = Users.query.filter_by(Users.id = id).all()
+
     cash = round(cash_in[0]['cash'], 2)
     grand_total = 0.0
     portfolio = 0.0
-    stocks = db.execute("SELECT symbol, stock, quantity FROM portfolio WHERE id = :id", id = id)
+    # raw SQL
+    # stocks = db.execute("SELECT symbol, stock, quantity FROM portfolio WHERE id = :id", id = id)
+    # I think this will return every column, which is overkill
+    # Is with_entities() helpful? I looked; I'm not sure
+    # I'm not even sure I need all() there; I assume with_entities() would replace it, at least
+    # Actually, read this:
+    # https://stackoverflow.com/questions/2128505/whats-the-difference-between-filter-and-filter-by-in-sqlalchemy
+    stocks = Users.query.get(id).all()
 
     for stock in stocks:
         temp = lookup(stock['symbol'])
@@ -130,7 +150,11 @@ def account():
         # else:
             return apology("new passwords do not match")
 
-        rows = db.execute("SELECT cash, hash, username FROM users WHERE id = :id", id = id)
+        # raw SQL
+        # rows = db.execute("SELECT cash, hash, username FROM users WHERE id = :id", id = id)
+        # ORM
+        rows = Users.query.get(id).all()
+
         username = rows[0]['username']
         cash = round(rows[0]['cash'], 2)
 
@@ -140,13 +164,27 @@ def account():
 
         # encrypt and write new password to database
         hash = pwd_context.hash(request.form.get("password"))
-        db.execute("UPDATE users SET hash = :hash WHERE id = :id", hash = hash, id = id)
+        # raw SQL
+        # db.execute("UPDATE users SET hash = :hash WHERE id = :id", hash = hash, id = id)
+        # ORM
+        # source: https://stackoverflow.com/questions/2631935/sqlalchemy-a-better-way-for-update-with-declarative
+        # session.query(Users).filter_by(id = id).update({User.hash: hash})
+        # But I think the above is just straight SQLAlchemy ORM, not Flask-SQLA...
+        # ...meaning th I should use Flask-SQLAlchemy, e.g.:
+        # source: https://stackoverflow.com/questions/6699360/flask-sqlalchemy-update-a-rows-information
+        user = Users.query.get(id)
+        user.hash = hash
+        db.session.commit()
+
         # return apology(str(hash))
         return render_template("account.html", username = username)
 
     else:
         # CONTENT
-        rows = db.execute("SELECT username FROM users WHERE id = :id", id = id)
+        # raw SQL
+        # rows = db.execute("SELECT username FROM users WHERE id = :id", id = id)
+        rows = Users.query.get(id).all()
+
         username = rows[0]['username']
         return render_template("account.html", username = username)
 
@@ -169,7 +207,10 @@ def buy():
         total_owned = 0
         type = "purchase"
 
-        rows = db.execute("SELECT cash FROM users WHERE id = :id", id = id)
+        # raw SQL
+        # rows = db.execute("SELECT cash FROM users WHERE id = :id", id = id)
+        # ORM
+        rows = Users.query.get(id).all()
         cash = round(rows[0]['cash'], 2)
         # ensure valid submission
         if stock == None:
@@ -192,24 +233,51 @@ def buy():
         # subtract money from account
         # db.execute("UPDATE portfolio SET cash = cash - :cost WHERE id = :id")
         # remove the cost from our cash BOTH in the database and from our variable here
-        db.execute("UPDATE users SET cash = cash - :cost WHERE id = :id", cost = round(cost, 2), id = id)
+        # raw SQL
+        # db.execute("UPDATE users SET cash = cash - :cost WHERE id = :id", cost = round(cost, 2), id = id)
+        # Flask-SQLA
+        user = Users.query.get(id)
+        user.cash = user.cash - round(cost, 2)
+        db.session.commit()
+
         cash -= round(cost, 2)
-        test = db.execute("SELECT * FROM portfolio WHERE id = :id AND symbol = :symbol", id = id, symbol = symbol)
+        # raw SQL
+        # test = db.execute("SELECT * FROM portfolio WHERE id = :id AND symbol = :symbol", id = id, symbol = symbol)
+        # ORM
+        rows = Portfolio.query.filter_by(Portfolio.symbol = symbol).get(id).all()
+
         if len(test) == 0:
-            db.execute("INSERT INTO portfolio (id, quantity, stock, symbol) VALUES (:id, :quantity, :stock_name, :symbol)", id = id, quantity = int(quantity), stock_name = stock_name, symbol = symbol)
+            # raw SQL
+            # db.execute("INSERT INTO portfolio (id, quantity, stock, symbol) VALUES (:id, :quantity, :stock_name, :symbol)", id = id, quantity = int(quantity), stock_name = stock_name, symbol = symbol)
+            # ORM
+            new_entry = Portfolio(id = id, quantity = int(quantity), stock = stock_name, symbol = symbol)
+            db.session.add(new_entry)
+            db.session.commit()
         # else, if it's there
         else:
-            db.execute("UPDATE portfolio SET quantity = quantity + :quantity WHERE id = :id AND stock = :stock_name AND symbol = :symbol", quantity = int(quantity), id = id, stock_name = stock_name, symbol = symbol)
+            # raw SQL
+            # db.execute("UPDATE portfolio SET quantity = quantity + :quantity WHERE id = :id AND stock = :stock_name AND symbol = :symbol", quantity = int(quantity), id = id, stock_name = stock_name, symbol = symbol)
+            # Flask-SQLAlchemy
+            user = Users.query.filter_by(stock = stock_name).get(id)
+            user.quantity = user.quantity + int(quantity)
+            db.session.commit()
 
         # populate list of (dicts of) all stocks / quantity owned by current user
-        stocks = db.execute("SELECT symbol, stock, quantity FROM portfolio WHERE id = :id", id = id)
+        # raw SQL
+        # stocks = db.execute("SELECT symbol, stock, quantity FROM portfolio WHERE id = :id", id = id)
+        # ORM
+        stocks = Portfolio.query.get(id).all()
 
         portfolio = 0.0
         grand_total = 0.0
 
 
         # update history
-        db.execute("INSERT INTO history (id, stock, quantity, purchase_price, type) VALUES (:id, :symbol, :quantity, :purchase_price, :type)", id = id, symbol = symbol, quantity = quantity, purchase_price = price, type = type)
+        # raw SQL
+        # db.execute("INSERT INTO history (id, stock, quantity, purchase_price, type) VALUES (:id, :symbol, :quantity, :purchase_price, :type)", id = id, symbol = symbol, quantity = quantity, purchase_price = price, type = type)
+        new_entry = History(id = id, purchase_price = price, quantity = quantity, stock = stock, type = type)
+        db.session.add(new_entry)
+        db.session.commit()
         for stock in stocks:
             # make new 'current_price' key for each stock
             # return apology(stock['stock'])
@@ -269,8 +337,15 @@ def history():
 
     id = session.get("user_id") # id = session['user_id']
     # use distinct so that rows contains no duplicates
-    rows = db.execute("SELECT * FROM history WHERE id = :id", id = id)
-    stocks = db.execute("SELECT DISTINCT stock FROM history WHERE id = :id", id = id)
+    # raw SQL
+    # rows = db.execute("SELECT * FROM history WHERE id = :id", id = id)
+    # ORM
+    rows = History.query.get(id).all()
+    # raw SQL
+    # stocks = db.execute("SELECT DISTINCT stock FROM history WHERE id = :id", id = id)
+    # ORM
+    stocks = History.query.get(id).all()
+
     current_prices = {}
 
     # counter_if = 0
@@ -309,7 +384,10 @@ def login():
         username = request.form.get("username")
 
         # query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = :username", username = username)
+        # raw SQL
+        # rows = db.execute("SELECT * FROM users WHERE username = :username", username = username)
+        # ORM
+        rows = Users.query.filter_by(Users.username = username).all()
 
         # ensure username exists and password is correct
         if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
@@ -472,12 +550,20 @@ def register():
         # if (request.form.get("username")) == db.execute("SELECT * FROM users WHERE username = :username", username = request.form.get("username")):
         # WT:
         # apparently this is the correct way:
-        result = db.execute("INSERT INTO users (email, username, hash) VALUES (:email, :username, :hash)", email = request.form.get("email"), username = request.form.get("username"), hash = hash)
+        # raw SQL
+        # result = db.execute("INSERT INTO users (email, username, hash) VALUES (:email, :username, :hash)", email = request.form.get("email"), username = request.form.get("username"), hash = hash)
+        new_entry = Users(id = id, email = request.form.get("email"), username = request.form.get("username"), hash = hash)
+        db.session.add(new_entry)
+        db.session.commit()
         if not result:
             return apology("username taken")
         # do I need this line? or will it actually already happen above? I think this actually is needed!
         # easy to test though
-        db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", username = request.form.get("username"), hash = hash)
+        # raw SQL
+        # db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", username = request.form.get("username"), hash = hash)
+        new_entry = Users(username = request.form.get("username"), hash = hash)
+        db.session.add(new_entry)
+        db.session.commit()
         # na not this
         # rows = db.execute("INSERT INTO users (username, password) VALUES (:username, :password), username = request.form.get("username")), password = password)
 
@@ -528,8 +614,15 @@ def sell():
             """
             return apology("Please Log In")
 
-        rows_user = db.execute("SELECT cash FROM users WHERE id = :id", id = id)
-        rows_portfolio = db.execute("SELECT * FROM portfolio WHERE id = :id AND symbol = :stock", id = id, stock = stock)
+        # raw SQL
+        # rows_user = db.execute("SELECT cash FROM users WHERE id = :id", id = id)
+        # ORM
+        rows_user = Users.query.get(id).all()
+        # raw SQL
+        # rows_portfolio = db.execute("SELECT * FROM portfolio WHERE id = :id AND symbol = :stock", id = id, stock = stock)
+        # ORM
+        rows_portfolio = Portfolio.query.filter_by(Portfolio.symbol = stock).get(id).all()
+
         cash = round(rows_user[0]['cash'], 2)
         # debugging
         # return apology(str(type(rows_portfolio)))
@@ -561,20 +654,37 @@ def sell():
             return apology("you cannot sell that which you do not own")
 
         # add cash back to user
-        db.execute("UPDATE users SET cash = cash + :sale_value WHERE id = :id", sale_value = sale_value, id = id)
+        # raw SQL
+        # db.execute("UPDATE users SET cash = cash + :sale_value WHERE id = :id", sale_value = sale_value, id = id)
+        # SQLA
+        user = Users.query.get(id)
+        user.cash = user.cash + sale_value
+        db.session.commit()
+
         cash += round(sale_value, 2)
 
         # remove shares from user's portfolio
-        db.execute("UPDATE portfolio SET quantity = quantity - :quantity WHERE id = :id AND stock = :stock AND symbol = :symbol", quantity = int(quantity), id = id, stock = stock, symbol = symbol)
+        # raw SQL
+        # db.execute("UPDATE portfolio SET quantity = quantity - :quantity WHERE id = :id AND stock = :stock AND symbol = :symbol", quantity = int(quantity), id = id, stock = stock, symbol = symbol)
+        user = Users.query.filter_by(Users.stock = stock).get(id)
+        user.quantity = user.quantity - int(quantity)
+        db.session.commit()
 
         # populate list of (dicts of) all stocks / quantity owned by current user
-        stocks = db.execute("SELECT stock, quantity FROM portfolio WHERE id = :id", id = id)
+        # raw SQL
+        # stocks = db.execute("SELECT stock, quantity FROM portfolio WHERE id = :id", id = id)
+        # ORM
+        stocks = Portfolio.query.get(id).all()
 
         portfolio = 0.0
         grand_total = 0.0
 
         # update history
-        db.execute("INSERT INTO history (id, purchase_price, quantity, stock, type) VALUES (:id, :purchase_price, :quantity, :name, :type)", id = id, purchase_price = price, quantity = quantity, name = name, type = type)
+        # raw SQL
+        # db.execute("INSERT INTO history (id, purchase_price, quantity, stock, type) VALUES (:id, :purchase_price, :quantity, :name, :type)", id = id, purchase_price = price, quantity = quantity, name = name, type = type)
+        new_entry = History(id = id, purchase_price = price, quantity = quantity, stock = name, type = type)
+        db.session.add(new_entry)
+        db.session.commit()
 
         # fill list so we can populate our HTML table
         for stock in stocks:
