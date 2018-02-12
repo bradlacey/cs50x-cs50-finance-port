@@ -244,7 +244,7 @@ def buy():
         # raw SQL
         # test = db.execute("SELECT * FROM portfolio WHERE id = :id AND symbol = :symbol", id = id, symbol = symbol)
         # ORM
-        rows = Portfolio.query.filter_by(Portfolio.symbol = symbol).get(id).all()
+        rows = Portfolio.query.filter_by(Portfolio.symbol == symbol).get(id).all()
 
         if len(test) == 0:
             # raw SQL
@@ -387,7 +387,7 @@ def login():
         # raw SQL
         # rows = db.execute("SELECT * FROM users WHERE username = :username", username = username)
         # ORM
-        rows = Users.query.filter_by(Users.username = username).all()
+        rows = Users.query.filter_by(Users.username == username).all()
 
         # ensure username exists and password is correct
         if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
@@ -621,7 +621,7 @@ def sell():
         # raw SQL
         # rows_portfolio = db.execute("SELECT * FROM portfolio WHERE id = :id AND symbol = :stock", id = id, stock = stock)
         # ORM
-        rows_portfolio = Portfolio.query.filter_by(Portfolio.symbol = stock).get(id).all()
+        rows_portfolio = Portfolio.query.filter_by(Portfolio.symbol == stock).get(id).all()
 
         cash = round(rows_user[0]['cash'], 2)
         # debugging
@@ -666,7 +666,7 @@ def sell():
         # remove shares from user's portfolio
         # raw SQL
         # db.execute("UPDATE portfolio SET quantity = quantity - :quantity WHERE id = :id AND stock = :stock AND symbol = :symbol", quantity = int(quantity), id = id, stock = stock, symbol = symbol)
-        user = Users.query.filter_by(Users.stock = stock).get(id)
+        user = Users.query.filter_by(Users.stock == stock).get(id)
         user.quantity = user.quantity - int(quantity)
         db.session.commit()
 
