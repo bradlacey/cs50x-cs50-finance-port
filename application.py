@@ -42,7 +42,7 @@ class Users(db.Model):
 # (I think the above syntax is right...see compose.com tutorial though)
 class History(db.Model):
     uid = db.Column(db.Integer, primary_key=True)
-    id = db.Column(db.Integerfrom application import db)
+    id = db.Column(db.Integer)
     purchase_datetime = db.Column(db.DateTime, nullable=False)
     purchase_price = db.Column(db.Numeric, nullable=False)
     quantity = db.Column(db.Integer, unique=False, nullable=False)
