@@ -563,7 +563,7 @@ def register():
         # easy to test though
         # raw SQL
         # db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", username = request.form.get("username"), hash = hash)
-        new_entry = Users(username = request.form.get("username"), hash = hash)
+        new_entry = Users(request.form.get("username"), hash)
         db.session.add(new_entry)
         db.session.commit()
         # na not this
