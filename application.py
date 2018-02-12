@@ -97,7 +97,7 @@ def index():
     # raw SQL
     # cash_in = db.execute("SELECT cash FROM users WHERE id = :id", id = id)
     # ORM
-    cash_in = Users.query.filter_by(Users.id = id).all()
+    cash_in = Users.query.filter_by(Users.id == id).all()
 
     cash = round(cash_in[0]['cash'], 2)
     grand_total = 0.0
