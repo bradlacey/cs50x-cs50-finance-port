@@ -327,7 +327,7 @@ def login():
             return apology("must provide password")
 
         username = request.form.get("username")
-        rows = Users.query.filter_by(Users.username == username).all()
+        rows = Users.query.filter_by(username == username).all()
 
         # ensure username exists and password is correct
         if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
