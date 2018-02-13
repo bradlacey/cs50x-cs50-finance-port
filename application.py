@@ -401,7 +401,7 @@ def login():
         # raw SQL
         # rows = db.execute("SELECT * FROM users WHERE username = :username", username = username)
         # ORM
-        rows = Users.query.filter_by(Users.username == username).all()
+        rows = Users.query.filter_by(Users.username = username).all()
 
         # ensure username exists and password is correct
         if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
