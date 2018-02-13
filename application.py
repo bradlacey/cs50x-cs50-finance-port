@@ -184,10 +184,10 @@ def buy():
         total_owned = 0
         type = "purchase"
 
-        # raw SQL
-        # rows = db.execute("SELECT cash FROM users WHERE id = :id", id = id)
-        # ORM
-        rows = Users.query.get(id).all()
+        # debugging
+        # AttributeError: 'Users' object has no attribute 'all'
+        # rows = Users.query.get(id).all()
+        rows = Users.query.get(id)
         cash = round(rows[0]['cash'], 2)
         # ensure valid submission
         if stock == None:
