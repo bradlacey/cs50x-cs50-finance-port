@@ -334,13 +334,16 @@ def login():
 
         for item in rows:
             hash = item.hash
+            id = item.id
 
         # if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
         if len(rows) < 1 or not pwd_context.verify(request.form.get("password"), hash):
             return apology("invalid username and/or password")
 
         # remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        # debugging
+        # session["user_id"] = rows[0]["id"]
+        session["user_id"] = id
 
         # redirect user to home page
         return render_template("index.html", username = username)
