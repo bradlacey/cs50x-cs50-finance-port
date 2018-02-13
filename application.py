@@ -575,31 +575,17 @@ def register():
         db.session.commit()
         if not result:
             return apology("username taken")
-        # do I need this line? or will it actually already happen above? I think this actually is needed!
-        # easy to test though
-        # raw SQL
-        # db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", username = request.form.get("username"), hash = hash)
-        new_entry = Users(request.form.get("username"), hash)
-        db.session.add(new_entry)
-        db.session.commit()
-        # na not this
-        # rows = db.execute("INSERT INTO users (username, password) VALUES (:username, :password), username = request.form.get("username")), password = password)
+
+        # DO WE NEED THIS?
+        # new_entry = Users(request.form.get("email"), request.form.get("username"), hash)
+        # db.session.add(new_entry)
+        # db.session.commit()
 
         # remember which user has been created and is logged in
-        # this can't be right!
-        # session["user_id"] = "id"
-        # debugging
-        # return apology(str(result))
-        # session['user_id'] = result[0]['id']
         session['user_id'] = result
 
         # redirect user to home page
-        # TemplateNotFound error
-        # return redirect(url_for("index"))
-        # return render_template("index.html")
-        # return redirect(url_for("success"))
         return render_template("success.html", username = request.form.get("username"))
-        # return redirect(url_for("/")
 
     # else if user reached route via GET (as by clicking a link or via redirect)
     else:
