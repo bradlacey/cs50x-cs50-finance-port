@@ -570,7 +570,7 @@ def register():
         # new_entry.email = request.form.get("email")
         # new_entry.username = request.form.get("username")
         # new_entry.hash = hash
-        new_entry = Users(request.form.get("email"), request.form.get("username"), hash)
+        result = Users(request.form.get("email"), request.form.get("username"), hash)
         db.session.add(new_entry)
         db.session.commit()
         if not result:
