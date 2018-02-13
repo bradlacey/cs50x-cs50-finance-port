@@ -26,8 +26,8 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     # bug-fixing (test)
-    # hash = db.Column(db.String(120), nullable=False)
-    hash = db.Column(db.String, nullable=False)
+    hash = db.Column(db.String(120), nullable=False)
+    # hash = db.Column(db.String, nullable=False)
     cash = db.Column(db.Numeric, default=10000, nullable=False)
 
     def __init__(self, email, username, hash):
