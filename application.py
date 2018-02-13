@@ -330,7 +330,9 @@ def login():
         rows = Users.query.filter_by(username = username).all()
 
         # ensure username exists and password is correct
-        if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
+        # debugging
+        # if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
+        if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows["hash"]):
             return apology("invalid username and/or password")
 
         # remember which user has logged in
