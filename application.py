@@ -571,7 +571,7 @@ def register():
         # new_entry.username = request.form.get("username")
         # new_entry.hash = hash
         result = Users(request.form.get("email"), request.form.get("username"), hash)
-        db.session.add(new_entry)
+        db.session.add(result)
         db.session.commit()
         if not result:
             return apology("username taken")
