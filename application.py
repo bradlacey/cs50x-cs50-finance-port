@@ -331,8 +331,9 @@ def login():
 
         # ensure username exists and password is correct
         # debugging
+
         # if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
-        if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows["hash"]):
+        if len(rows) < 1 or not pwd_context.verify(request.form.get("password"), rows.hash):
             return apology("invalid username and/or password")
 
         # remember which user has logged in
