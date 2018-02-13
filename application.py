@@ -178,14 +178,6 @@ def account():
 
         # encrypt and write new password to database
         hash = pwd_context.hash(request.form.get("password"))
-        # raw SQL
-        # db.execute("UPDATE users SET hash = :hash WHERE id = :id", hash = hash, id = id)
-        # ORM
-        # source: https://stackoverflow.com/questions/2631935/sqlalchemy-a-better-way-for-update-with-declarative
-        # session.query(Users).filter_by(id = id).update({User.hash: hash})
-        # But I think the above is just straight SQLAlchemy ORM, not Flask-SQLA...
-        # ...meaning th I should use Flask-SQLAlchemy, e.g.:
-        # source: https://stackoverflow.com/questions/6699360/flask-sqlalchemy-update-a-rows-information
         user = Users.query.get(id)
         user.hash = hash
         db.session.commit()
@@ -432,16 +424,13 @@ def logout():
 @app.route("/password_reset", methods=["GET", "POST"])
 def password_reset():
 
-    # CONTENT
     id = session.get("user_id") # id = session['user_id']
 
     if request.method == "POST":
 
-        # CONTENT
         return apology("soz")
 
     else:
-        # CONTENT
         return render_template("password_reset.html")
 
 
@@ -462,18 +451,7 @@ def quote():
 
     # if user reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-
-        # set values from received
-        # name = information.name
-        # price = information.price
-        # symbol = information.symbol     # stock should == symbol though, right?
-
-        # print(name, price, symbol)
-
-
-
         stock = request.form.get("stock")
-
         # ensure stock was submitted
         if stock == None:
             return apology("must provide stock to look up")
