@@ -188,7 +188,7 @@ def buy():
         # AttributeError: 'Users' object has no attribute 'all'
         # rows = Users.query.get(id).all()
         rows = Users.query.get(id)
-        cash = round(rows[0]['cash'], 2)
+        cash = round(rows.cash, 2)
         # ensure valid submission
         if stock == None:
             return apology("must provide valid stock symbol")
