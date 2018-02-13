@@ -401,7 +401,7 @@ def login():
         # raw SQL
         # rows = db.execute("SELECT * FROM users WHERE username = :username", username = username)
         # ORM
-        rows = Users.query.filter_by(Users.username = username).all()
+        rows = Users.query.filter_by(Users.username == username).all()
 
         # ensure username exists and password is correct
         if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
@@ -577,9 +577,9 @@ def register():
             return apology("username taken")
 
         # DO WE NEED THIS?
-        # new_entry = Users(request.form.get("email"), request.form.get("username"), hash)
-        # db.session.add(new_entry)
-        # db.session.commit()
+        new_entry = Users(request.form.get("email"), request.form.get("username"), hash)
+        db.session.add(new_entry)
+        db.session.commit()
 
         # remember which user has been created and is logged in
         session['user_id'] = result
