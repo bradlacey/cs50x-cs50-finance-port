@@ -214,13 +214,12 @@ def buy():
         # db.execute("UPDATE users SET cash = cash - :cost WHERE id = :id", cost = round(cost, 2), id = id)
         # Flask-SQLA
         user = Users.query.get(id)
-        user.cash = user.cash - round(cost, 2)
+        user.cash = round((user.cash - cost), 2)
         db.session.commit()
 
+        # wait, why is this here??
         cash -= round(cost, 2)
-        # raw SQL
-        # test = db.execute("SELECT * FROM portfolio WHERE id = :id AND symbol = :symbol", id = id, symbol = symbol)
-        # ORM
+
         rows = Portfolio.query.filter_by(Portfolio.symbol == symbol).get(id).all()
 
         if len(test) == 0:
