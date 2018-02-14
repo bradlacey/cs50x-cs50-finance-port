@@ -100,7 +100,8 @@ def index():
     stocks = dict((col, getattr(stock, col)) for col in stock.__table__.columns.keys())
 
     # stocks = Users.query.get(id)
-
+    # TO DO
+    """
     for stock in stocks:
         temp = lookup(stock.symbol)
         stock['current_price'] = temp['price']
@@ -112,6 +113,7 @@ def index():
         portfolio += round(stock['value'], 2)
         stock['current_price'] = usd(round(float(stock['current_price']), 2))
         stock['value'] = usd(round(stock['value'], 2))
+    """
     # update grand total
     grand_total = round(portfolio, 2) + round(cash, 2)
     return render_template("index.html", balance = usd(round(cash, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), stocks = stocks)
