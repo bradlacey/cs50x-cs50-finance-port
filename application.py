@@ -251,7 +251,7 @@ def buy():
             # raw SQL
             # db.execute("UPDATE portfolio SET quantity = quantity + :quantity WHERE id = :id AND stock = :stock_name AND symbol = :symbol", quantity = int(quantity), id = id, stock_name = stock_name, symbol = symbol)
             # Flask-SQLAlchemy
-            new_entry = Portfolio.query.filter_by(stock = stock_name).get(id)
+            new_entry = Portfolio.query.filter_by(id = id, stock = stock_name).first()
             new_entry.quantity = new_entry.quantity + int(quantity)
             db.session.commit()
 
