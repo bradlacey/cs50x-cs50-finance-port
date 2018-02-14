@@ -119,21 +119,21 @@ def account():
     if request.method == "POST":
         # ensure old password was submitted
         if not request.form.get("password"):
-            return apology("must provide new password")
+            return apology("you must provide your old password")
 
         # ensure new password was submitted
         if not request.form.get("password"):
-            return apology("must provide new password")
+            return apology("you must provide a new password")
 
         # ensure new password was submitted twice
         if not request.form.get("password_confirmed"):
-            return apology("must provide new password twice")
+            return apology("you must provide your new password twice")
 
         # ensure new passwords match
         if request.form.get("password") != request.form.get("password_confirmed"):
             # nothin'
         # else:
-            return apology("new passwords do not match")
+            return apology("the new passwords do not match")
 
         # raw SQL
         # rows = db.execute("SELECT cash, hash, username FROM users WHERE id = :id", id = id)
@@ -188,13 +188,13 @@ def buy():
         cash = round(rows.cash, 2)
         # ensure valid submission
         if stock == None:
-            return apology("must provide valid stock symbol")
+            return apology("you must provide a valid stock symbol")
         quantity = int(quantity)
         if quantity == None or quantity <= 0:
-            return apology("must provide valid quantity")
+            return apology("you must provide a valid quantity")
         # ensure stock code is valid
         if information == None:
-            return apology("must enter a valid stock symbol")
+            return apology("you must enter a valid stock symbol")
         # set values from received
         stock_name = information['name']
         price = round(information['price'], 2)
@@ -203,7 +203,7 @@ def buy():
 
         # check that the user can afford the quantity requested
         if cost > cash:
-            return apology("account balance too low for purchase")
+            return apology("your account balance is too low for your intended purchase")
         # subtract money from account
         # db.execute("UPDATE portfolio SET cash = cash - :cost WHERE id = :id")
         # remove the cost from our cash BOTH in the database and from our variable here
@@ -251,7 +251,6 @@ def buy():
         db.session.commit()
         for stock in stocks:
             # make new 'current_price' key for each stock
-            # return apology(stock['stock'])
             temp = lookup(stock['symbol'])
             stock['current_price'] = temp['price']
             stock['symbol'] = temp['symbol']
@@ -270,8 +269,6 @@ def buy():
         # variable to control index.html
         buying = True
 
-        # debugging: we never get to this point
-        # return apology("here?")
         # return redirect(url_for("index")) #, balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, type = type)
         return render_template("index.html", balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, type = type)
 
@@ -293,7 +290,7 @@ def history():
     current_prices = {}
 
     if stocks is None:
-        return apology("TODO")
+        return apology("nothing to show yet")
     for stock in stocks:
         temp = lookup(stock['stock'])
         current_prices[stock['stock']] = usd(float(format(round(temp['price'], 2), '.2f')))
@@ -303,7 +300,7 @@ def history():
 
     return render_template("history.html", rows = rows,  current_prices = current_prices)
     # if error:
-    return apology("SOZ M8")
+    return apology("there was an unknown error [0x02]")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -318,11 +315,11 @@ def login():
 
         # ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username")
+            return apology("you must provide a valid username")
 
         # ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password")
+            return apology("the password you provided was incorrect")
 
         username = request.form.get("username")
         rows = Users.query.filter_by(username = username)
@@ -369,7 +366,7 @@ def password_reset():
 
     if request.method == "POST":
 
-        return apology("soz")
+        return apology("there was an unknown error [0x02]")
 
     else:
         return render_template("password_reset.html")
@@ -395,13 +392,13 @@ def quote():
         stock = request.form.get("stock")
         # ensure stock was submitted
         if stock == None:
-            return apology("must provide stock to look up")
+            return apology("you must provide a stock to look up")
 
         information = lookup(stock)
 
         # ensure stock code is valid
         if information == None:
-            return apology("must provide a valid stock symbol")
+            return apology("you must provide a valid stock symbol")
         else:
             # set values from received
             # name = information[row[1]] # name
@@ -430,7 +427,7 @@ def quote():
         return render_template("quote.html")  # , name = name, price = price, symbol = symbol)
 
 
-    return apology("no stock with the code ____ exists")
+    return apology("no stock with the code you entered exists")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -445,19 +442,19 @@ def register():
 
         # ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username")
+            return apology("you must provide a username")
 
         # ensure email address was submitted
         if not request.form.get("email"):
-            return apology("must provide email address")
+            return apology("you must provide an email address")
 
         # ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password")
+            return apology("you must provide a password")
 
         # ensure second password was submitted
         elif not request.form.get("password_confirmed"):
-            return apology("must provide password twice")
+            return apology("you must enter your password twice")
 
         # is this the same as what I do with the SQL code above?
         # registrant = Registrant(request.form["username"], request.form["password"])
@@ -471,7 +468,7 @@ def register():
         if request.form.get("password") != request.form.get("password_confirmed"):
             # nothin'
         # else:
-            return apology("passwords do not match")
+            return apology("the passwords you entered do not match")
 
         # encrypt password (how secure is this?)
         # this one is from the WT
@@ -480,7 +477,7 @@ def register():
         db.session.add(result)
         db.session.commit()
         if not result:
-            return apology("username taken")
+            return apology("that username is taken")
 
         # DO WE NEED THIS?
         new_entry = Users(request.form.get("email"), request.form.get("username"), hash)
@@ -522,7 +519,7 @@ def sell():
                 session_thing[i] = value
                 i += 1
             """
-            return apology("Please Log In")
+            return apology("please log in")
 
         rows_user = Users.query.get(id)
         rows_portfolio = Portfolio.query.filter_by(Portfolio.symbol == stock).get(id)
@@ -531,15 +528,15 @@ def sell():
 
         # ensure stock was submitted
         if stock == None:
-            return apology("must provide valid stock symbol")
+            return apology("you must provide a valid stock symbol")
         if quantity == None:
-            return apology("must provide stock symbol and quantity to buy, stock tho: {}".format(stock))
+            return apology("you must provide a valid quantity [0x01]")
         # return apology(str(type(quantity)))
         quantity = int(quantity)
         if quantity == None or quantity <= 0:
-            return apology("must provide valid quantity")
+            return apology("you must provide a valid quantity [0x02]")
         if information == None:
-            return apology("must ender a valid stock symbol")
+            return apology("you must enter a valid stock symbol")
 
         # set values from received
         name = information['name']
