@@ -342,14 +342,14 @@ def login():
         # ensure username exists and password is correct
         # debugging
 
-        """
+        
         for item in rows:
             hash = item.hash
             id = item.id
-        """
 
-        hash = rows.hash
-        id = rows.id
+
+        # hash = rows.hash
+        # id = rows.id
 
         # if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
         if rows is None or not pwd_context.verify(request.form.get("password"), hash):
