@@ -162,8 +162,8 @@ def account():
         # rows = db.execute("SELECT username FROM users WHERE id = :id", id = id)
         rows = Users.query.get(id)
 
-        username = rows[0]['username']
-        return render_template("account.html", username = username)
+        # username = rows.username
+        return render_template("account.html", username = rows.username)
 
 
 @app.route("/buy", methods=["GET", "POST"])
