@@ -45,13 +45,13 @@ class History(db.Model):
     stock = db.Column(db.String(80), unique=False, nullable=False)
     transaction_type = db.Column(db.String(12), unique=False, nullable=False)
 
-    def __init__(self, id, purchase_datetime, purchase_price, quantity, stock, type):
+    def __init__(self, id, purchase_datetime, purchase_price, quantity, stock, transaction_type):
         self.id = id
         self.purchase_datetime = purchase_datetime
         self.purchase_price = purchase_price
         self.quantity = quantity
         self.stock = stock
-        self.type = type
+        self.transaction_type = transaction_type
 
 class Portfolio(db.Model):
     uid = db.Column(db.Integer, primary_key=True)
@@ -199,7 +199,7 @@ def buy():
 
         quantity = int(request.form.get("quantity"))
         total_owned = 0
-        type = "purchase"
+        transaction_type = "purchase"
 
         rows = Users.query.get(id)
         cash = round(rows.cash, 2)
@@ -293,8 +293,7 @@ def buy():
         buying = True
 
         # return redirect(url_for("index")) #, balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, type = type)
-        return render_template("index.html", balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, type = type)
-
+        return render_template("index.html", balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, transaction_type = transaction_type)
 
     # load page as normal
     else:
@@ -529,7 +528,7 @@ def sell():
     """Sell shares of stock."""
 
     id = session.get("user_id") # id = session['user_id']
-    type = "sale"
+    transaction_type = "sale"
 
     if request.method == "POST":
 
@@ -596,7 +595,7 @@ def sell():
         grand_total = 0.0
 
         # update history
-        new_entry = History(id = id, purchase_price = price, quantity = quantity, stock = name, type = type)
+        new_entry = History(id = id, purchase_price = price, quantity = quantity, stock = name, transaction_type = transaction_type)
         db.session.add(new_entry)
         db.session.commit()
 
