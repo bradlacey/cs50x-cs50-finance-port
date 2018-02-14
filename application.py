@@ -96,7 +96,7 @@ def index():
 
     # debugging
     # source: https://stackoverflow.com/questions/16947276/flask-sqlalchemy-iterate-column-values-on-a-single-row
-    stock = Users.query.get(id).first()
+    stock = Users.query.filter_by(id = id).first()
     stocks = dict((col, getattr(stock, col)) for col in stock.__table__.columns.keys())
 
     # stocks = Users.query.get(id)
