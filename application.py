@@ -196,7 +196,7 @@ def buy():
         stock = stock.upper()
         information = lookup(stock)
 
-        quantity = request.form.get("quantity")
+        quantity = int(request.form.get("quantity"))
         total_owned = 0
         type = "purchase"
 
@@ -205,17 +205,17 @@ def buy():
         # ensure valid submission
         if stock == None:
             return apology("you must provide a valid stock symbol")
-        quantity = int(quantity)
+        # ensure quantity is valid
         if quantity == None or quantity <= 0:
             return apology("you must provide a valid quantity")
-        # ensure stock code is valid
+        # ensure stock code / lookup is valid
         if information == None:
             return apology("you must enter a valid stock symbol")
         # set values from received
         stock_name = information['name']
         price = round(information['price'], 2)
         symbol = information['symbol']
-        cost = round(float(price), 2) * round(float(quantity), 2)
+        cost = round(float(price) * float(quantity), 2)
 
         # check that the user can afford the quantity requested
         if cost > cash:
@@ -227,14 +227,17 @@ def buy():
         # db.execute("UPDATE users SET cash = cash - :cost WHERE id = :id", cost = round(cost, 2), id = id)
         # Flask-SQLA
         user = Users.query.get(id)
-        user.cash = round((Decimal(user.cash) - Decimal(cost)), 2)
+        user.cash = round(Decimal(user.cash) - Decimal(cost), 2)
         db.session.commit()
 
         # wait, why is this here??
-        cash = Decimal(cash) - Decimal(round(cost, 2))
+        # I think I can remove it; we'll see
+        # cash = Decimal(cash) - Decimal(round(cost, 2))
 
         # rows = Portfolio.query.filter_by(symbol = symbol).get(id)
-        rows = Portfolio.query.filter_by(id = id, symbol = symbol).first()
+        test = Portfolio.query.filter_by(id = id, symbol = symbol).first()
+
+        return apology(test)
 
         if len(test) == 0:
             # raw SQL
