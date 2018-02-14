@@ -148,8 +148,8 @@ def account():
         # ORM
         rows = Users.query.get(id)
 
-        username = rows[0]['username']
-        cash = round(rows[0]['cash'], 2)
+        username = rows.username
+        cash = round(rows.cash, 2)
 
         # ensure username exists and password is correct
         if len(rows) != 1 or not pwd_context.verify(request.form.get("password_old"), rows[0]["hash"]):
@@ -298,7 +298,7 @@ def history():
     current_prices = {}
 
     if stocks is None:
-        return apology("nothing to show yet")
+        return apology("there's nothing to show here yet")
     for stock in stocks:
         temp = lookup(stock['stock'])
         current_prices[stock['stock']] = usd(float(format(round(temp['price'], 2), '.2f')))
