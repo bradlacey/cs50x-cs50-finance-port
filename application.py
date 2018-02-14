@@ -90,7 +90,7 @@ stock_names = []
 @login_required
 def index():
     id = session.get("user_id")
-    cash_in = Users.query.filter_by(Users.id = id)
+    cash_in = Users.query.filter_by(id = id)
     cash = round(cash_in[0]['cash'], 2)
     grand_total = 0.0
     portfolio = 0.0
@@ -557,7 +557,7 @@ def sell():
         cash += round(sale_value, 2)
 
         # remove shares from user's portfolio
-        user = Users.query.filter_by(Users.stock == stock).get(id)
+        user = Users.query.filter_by(stock = stock).get(id)
         user.quantity = user.quantity - int(quantity)
         db.session.commit()
 
