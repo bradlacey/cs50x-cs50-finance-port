@@ -90,7 +90,7 @@ stock_names = []
 @login_required
 def index():
     id = session.get("user_id")
-    cash_in = Users.query.filter_by(Users.id == id)
+    cash_in = Users.query.filter_by(Users.id = id)
     cash = round(cash_in[0]['cash'], 2)
     grand_total = 0.0
     portfolio = 0.0
