@@ -303,7 +303,7 @@ def history():
 
     return render_template("history.html", rows = rows,  current_prices = current_prices)
     # if error:
-    return apology("SOZ M8)
+    return apology("SOZ M8")
 
 
 @app.route("/login", methods=["GET", "POST"])
