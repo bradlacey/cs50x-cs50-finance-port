@@ -116,7 +116,8 @@ def index():
     """
     # update grand total
     # grand_total = round(portfolio, 2) + round(cash, 2)
-    return render_template("index.html") #, balance = usd(round(cash, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), stocks = stocks)
+    username = "friend"
+    return render_template("index.html", username = username) #, balance = usd(round(cash, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), stocks = stocks)
 
 @app.route("/account", methods=["GET", "POST"])
 @login_required
