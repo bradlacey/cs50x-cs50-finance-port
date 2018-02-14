@@ -43,7 +43,7 @@ class History(db.Model):
     purchase_price = db.Column(db.Numeric, nullable=False)
     quantity = db.Column(db.Integer, unique=False, nullable=False)
     stock = db.Column(db.String(80), unique=False, nullable=False)
-    type = db.Column(db.String(12), unique=False, nullable=False)
+    transaction_type = db.Column(db.String(12), unique=False, nullable=False)
 
     def __init__(self, id, purchase_datetime, purchase_price, quantity, stock, type):
         self.id = id
@@ -268,9 +268,10 @@ def buy():
         purchase_datetime = datetime.datetime
 
         # update history
-        new_entry = History(id = id, purchase_datetime = purchase_datetime, purchase_price = price, quantity = quantity, stock = stock, type = type)
+        new_entry = History(id = id, purchase_datetime = purchase_datetime, purchase_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
         db.session.add(new_entry)
         db.session.commit()
+
         for stock in stocks:
             # make new 'current_price' key for each stock
             temp = lookup(stock['symbol'])
