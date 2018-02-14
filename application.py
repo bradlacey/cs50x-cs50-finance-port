@@ -233,7 +233,7 @@ def buy():
         # wait, why is this here??
         cash = Decimal(cash) - Decimal(round(cost, 2))
 
-        rows = Portfolio.query.filter_by(Portfolio.symbol == symbol).get(id)
+        rows = Portfolio.query.filter_by(symbol = symbol).get(id)
 
         if len(test) == 0:
             # raw SQL
