@@ -231,7 +231,7 @@ def buy():
         db.session.commit()
 
         # wait, why is this here??
-        cash -= round(cost, 2)
+        cash = Decimal(cash) - Decimal(round(cost, 2))
 
         rows = Portfolio.query.filter_by(Portfolio.symbol == symbol).get(id)
 
