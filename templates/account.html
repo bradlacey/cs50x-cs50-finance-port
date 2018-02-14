@@ -12,9 +12,9 @@
         <br/>
         <br/>
     </div>
-    
+
     <div id="password_change">
-        
+
         <div class="current_user">
             <div class="message">
                 Current user:
@@ -30,10 +30,10 @@
                 <br/>
             </div>
         </div>
-        
+
         <form action="{{ url_for('account') }}" method="post">
             <fieldset>
-                
+
                 <div class="form-group">
                     <input class="form-control" autocorrect="off" autocapitalize="off" spellcheck="false" name="password_old" placeholder="Old Password" type="password"/>
                 </div>
@@ -46,11 +46,11 @@
                 <div class="form-group">
                     <button class="btn btn-default" type="submit">Submit</button>
                 </div>
-                
+
             </fieldset>
         </form>
     </div>
-        
+
     <script>
         function myFunction()
         {
@@ -67,5 +67,3 @@
     </script>
 
 {% endblock %}
-
-

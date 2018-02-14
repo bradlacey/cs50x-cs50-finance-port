@@ -126,7 +126,7 @@ def account():
 
     if request.method == "POST":
         # ensure old password was submitted
-        if not request.form.get("password"):
+        if not request.form.get("password_old"):
             return apology("you must provide your old password")
 
         # ensure new password was submitted
@@ -158,8 +158,9 @@ def account():
         # ensure username exists and password is correct
         # if len(rows) != 1 or not pwd_context.verify(request.form.get("password_old"), rows[0]["hash"]):
         if rows is None:
-            return apology("None")
-        if not pwd_context.verify(request.form.get("password"), hash):
+            return apology("None [username not found]")
+        if not pwd_context.verify(request.form.get("password_old"), hash):
+            return apology()
             return apology("you have entered your old password incorrectly")
 
         # encrypt and write new password to database
@@ -342,7 +343,7 @@ def login():
         # ensure username exists and password is correct
         # debugging
 
-        
+
         for item in rows:
             hash = item.hash
             id = item.id
