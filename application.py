@@ -214,7 +214,7 @@ def buy():
         # db.execute("UPDATE users SET cash = cash - :cost WHERE id = :id", cost = round(cost, 2), id = id)
         # Flask-SQLA
         user = Users.query.get(id)
-        user.cash = round((user.cash - cost), 2)
+        user.cash = round((Decimal(user.cash) - Decimal(cost)), 2)
         db.session.commit()
 
         # wait, why is this here??
