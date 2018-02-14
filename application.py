@@ -260,7 +260,7 @@ def buy():
         # debugging
         # stocks = Portfolio.query.get(id)
         stocks = Portfolio.query.filter_by(id = id).all()
-        
+
         portfolio = 0.0
         grand_total = 0.0
 
@@ -274,7 +274,7 @@ def buy():
 
         for stock in stocks:
             # make new 'current_price' key for each stock
-            temp = lookup(stock['symbol'])
+            temp = lookup(stock.symbol)
             stock['current_price'] = temp['price']
             stock['symbol'] = temp['symbol']
             stock['stock_name'] = temp['name']
