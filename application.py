@@ -205,7 +205,7 @@ def buy():
         cash = round(rows.cash, 2)
         # ensure valid submission
         if stock == None:
-            return apology("you must provide a valid stock symbol")
+            return apology("you must provide a valid stock symbol (sometimes this error appears inadvertently!)")
         # ensure quantity is valid
         if quantity == None or quantity <= 0:
             return apology("you must provide a valid quantity")
@@ -265,8 +265,8 @@ def buy():
         portfolio = 0.0
         grand_total = 0.0
 
-        purchase_datetime = datetime.datetime
-
+        purchase_datetime = '{date:%Y.%m.%d %H:%M:%S}'.format(date=datetime.datetime.now())
+        return apology(purchase_datetime)
         # update history
         new_entry = History(id = id, purchase_datetime = purchase_datetime, purchase_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
         db.session.add(new_entry)
