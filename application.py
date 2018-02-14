@@ -275,16 +275,16 @@ def buy():
         for stock in stocks:
             # make new 'current_price' key for each stock
             temp = lookup(stock.symbol)
-            stock['current_price'] = temp['price']
-            stock['symbol'] = temp['symbol']
-            stock['stock_name'] = temp['name']
-            stock['value'] = round(stock['current_price'], 2) * round(float(stock['quantity']), 2)
+            stock.current_price = temp.price
+            stock.symbol = temp.symbol
+            stock.stock_name = temp.name
+            stock.value = round(stock.current_price, 2) * round(float(stock.quantity), 2)
             # update grand_total
-            portfolio += round(stock['value'], 2)
-            stock['current_price'] = usd(round(float(stock['current_price']), 2))
-            stock['value'] = usd(round(stock['value'], 2))
+            portfolio += round(stock.value, 2)
+            stock.current_price = usd(round(float(stock.current_price), 2))
+            stock.value = usd(round(stock.value, 2))
             # update total_owned
-            total_owned += stock['quantity']
+            total_owned += stock.quantity
 
         # update grand total
         grand_total = round(portfolio, 2) + round(cash, 2)
@@ -307,18 +307,23 @@ def history():
 
     id = session.get("user_id") # id = session['user_id']
     # use distinct so that rows contains no duplicates
-    rows = History.query.get(id)
-    stocks = History.query.get(id)
+    rows = History.query.filter_by(id = id).all()
+    stocks = History.query.filter_by(id = id).all()
     current_prices = {}
 
     if stocks is None:
         return apology("there's nothing to show here yet")
     for stock in stocks:
-        temp = lookup(stock['stock'])
-        current_prices[stock['stock']] = usd(float(format(round(temp['price'], 2), '.2f')))
+        temp = lookup(stock.stock)
+        current_prices[stock.stock] = usd(float(format(round(temp['price'], 2), '.2f')))
 
-    for row in rows:
+    # replacing this--
+    """for row in rows:
         row['purchase_price'] = usd(float(format(round(row['purchase_price'], 2), '.2f')))
+    """
+    # --with this:
+    for stock in stocks:
+        stock.purchase_price = usd(float(format(round(stock.purchase_price, 2), '.2f')))
 
     return render_template("history.html", rows = rows,  current_prices = current_prices)
     # if error:
