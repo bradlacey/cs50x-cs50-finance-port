@@ -151,6 +151,10 @@ def account():
         username = rows.username
         cash = round(rows.cash, 2)
 
+        # for item in rows:
+        #     hash = item.hash
+        hash = rows.hash
+        
         # ensure username exists and password is correct
         # if len(rows) != 1 or not pwd_context.verify(request.form.get("password_old"), rows[0]["hash"]):
         if rows is None or not pwd_context.verify(request.form.get("password"), hash):
