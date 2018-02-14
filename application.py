@@ -266,7 +266,7 @@ def buy():
 
 
         # update history
-        new_entry = History(id = id, purchase_price = price, quantity = quantity, stock = stock, type = type)
+        new_entry = History(id = id, purchase_datetime = FetchedValue, purchase_price = price, quantity = quantity, stock = stock, type = type)
         db.session.add(new_entry)
         db.session.commit()
         for stock in stocks:
