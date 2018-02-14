@@ -90,11 +90,11 @@ stock_names = []
 @login_required
 def index():
     id = session.get("user_id")
-    cash_in = Users.query.filter_by(Users.id == id).all()
+    cash_in = Users.query.filter_by(Users.id == id)
     cash = round(cash_in[0]['cash'], 2)
     grand_total = 0.0
     portfolio = 0.0
-    stocks = Users.query.get(id).all()
+    stocks = Users.query.get(id)
 
     for stock in stocks:
         temp = lookup(stock['symbol'])
@@ -138,7 +138,7 @@ def account():
         # raw SQL
         # rows = db.execute("SELECT cash, hash, username FROM users WHERE id = :id", id = id)
         # ORM
-        rows = Users.query.get(id).all()
+        rows = Users.query.get(id)
 
         username = rows[0]['username']
         cash = round(rows[0]['cash'], 2)
@@ -160,7 +160,7 @@ def account():
         # CONTENT
         # raw SQL
         # rows = db.execute("SELECT username FROM users WHERE id = :id", id = id)
-        rows = Users.query.get(id).all()
+        rows = Users.query.get(id)
 
         username = rows[0]['username']
         return render_template("account.html", username = username)
@@ -184,9 +184,6 @@ def buy():
         total_owned = 0
         type = "purchase"
 
-        # debugging
-        # AttributeError: 'Users' object has no attribute 'all'
-        # rows = Users.query.get(id).all()
         rows = Users.query.get(id)
         cash = round(rows.cash, 2)
         # ensure valid submission
@@ -220,7 +217,7 @@ def buy():
         # wait, why is this here??
         cash -= round(cost, 2)
 
-        rows = Portfolio.query.filter_by(Portfolio.symbol == symbol).get(id).all()
+        rows = Portfolio.query.filter_by(Portfolio.symbol == symbol).get(id)
 
         if len(test) == 0:
             # raw SQL
@@ -242,7 +239,7 @@ def buy():
         # raw SQL
         # stocks = db.execute("SELECT symbol, stock, quantity FROM portfolio WHERE id = :id", id = id)
         # ORM
-        stocks = Portfolio.query.get(id).all()
+        stocks = Portfolio.query.get(id)
 
         portfolio = 0.0
         grand_total = 0.0
@@ -291,8 +288,8 @@ def history():
 
     id = session.get("user_id") # id = session['user_id']
     # use distinct so that rows contains no duplicates
-    rows = History.query.get(id).all()
-    stocks = History.query.get(id).all()
+    rows = History.query.get(id)
+    stocks = History.query.get(id)
     current_prices = {}
 
     for stock in stocks:
@@ -326,7 +323,7 @@ def login():
             return apology("must provide password")
 
         username = request.form.get("username")
-        rows = Users.query.filter_by(username = username).all()
+        rows = Users.query.filter_by(username = username)
 
         # ensure username exists and password is correct
         # debugging
@@ -525,8 +522,8 @@ def sell():
             """
             return apology("Please Log In")
 
-        rows_user = Users.query.get(id).all()
-        rows_portfolio = Portfolio.query.filter_by(Portfolio.symbol == stock).get(id).all()
+        rows_user = Users.query.get(id)
+        rows_portfolio = Portfolio.query.filter_by(Portfolio.symbol == stock).get(id)
         cash = round(rows_user[0]['cash'], 2)
         quantity_on_hand = rows_portfolio[0]['quantity']
 
@@ -566,7 +563,7 @@ def sell():
         db.session.commit()
 
         # populate list of (dicts of) all stocks / quantity owned by current user
-        stocks = Portfolio.query.get(id).all()
+        stocks = Portfolio.query.get(id)
 
         portfolio = 0.0
         grand_total = 0.0
