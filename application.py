@@ -292,6 +292,8 @@ def history():
     stocks = History.query.get(id)
     current_prices = {}
 
+    if stocks is None:
+        return apology("TODO")
     for stock in stocks:
         temp = lookup(stock['stock'])
         current_prices[stock['stock']] = usd(float(format(round(temp['price'], 2), '.2f')))
@@ -301,7 +303,7 @@ def history():
 
     return render_template("history.html", rows = rows,  current_prices = current_prices)
     # if error:
-    return apology("TODO")
+    return apology("SOZ M8)
 
 
 @app.route("/login", methods=["GET", "POST"])
