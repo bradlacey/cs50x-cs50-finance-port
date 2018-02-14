@@ -6,7 +6,7 @@ from functools import wraps
 
 
 # def apology(message, code=400):
-def apology(message)
+def apology(message):
     """Renders message as an apology to user."""
     # def escape(s):
         """
