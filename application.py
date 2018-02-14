@@ -102,7 +102,7 @@ def index():
     # stocks = Users.query.get(id)
 
     for stock in stocks:
-        temp = lookup(stock['symbol'])
+        temp = lookup(stock.symbol)
         stock['current_price'] = temp['price']
         stock['symbol'] = temp['symbol']
         stock['stock_name'] = temp['name']
