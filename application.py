@@ -237,9 +237,9 @@ def buy():
         # rows = Portfolio.query.filter_by(symbol = symbol).get(id)
         test = Portfolio.query.filter_by(id = id, symbol = symbol).first()
 
-        return apology(test)
+        # return apology(test)
 
-        if len(test) == 0:
+        if test is None:
             # raw SQL
             # db.execute("INSERT INTO portfolio (id, quantity, stock, symbol) VALUES (:id, :quantity, :stock_name, :symbol)", id = id, quantity = int(quantity), stock_name = stock_name, symbol = symbol)
             # ORM
