@@ -257,11 +257,10 @@ def buy():
             db.session.commit()
 
         # populate list of (dicts of) all stocks / quantity owned by current user
-        # raw SQL
-        # stocks = db.execute("SELECT symbol, stock, quantity FROM portfolio WHERE id = :id", id = id)
-        # ORM
-        stocks = Portfolio.query.get(id)
-
+        # debugging
+        # stocks = Portfolio.query.get(id)
+        stocks = Portfolio.query.filter_by(id = id).all()
+        
         portfolio = 0.0
         grand_total = 0.0
 
@@ -564,7 +563,7 @@ def sell():
         if quantity == None or quantity <= 0:
             return apology("you must provide a valid quantity [0x02]")
         if information == None:
-            return apology("you must enter a valid stock symbol")
+            return apology("you must enter a valid stock symbol (sometimes this message occurs in error!)")
 
         # set values from received
         name = information['name']
