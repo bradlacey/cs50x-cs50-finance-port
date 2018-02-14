@@ -92,7 +92,14 @@ def index():
     id = session.get("user_id")
     grand_total = 0.0
     portfolio = 0.0
-    stocks = Users.query.get(id)
+
+
+    # debugging
+    # source: https://stackoverflow.com/questions/16947276/flask-sqlalchemy-iterate-column-values-on-a-single-row
+    stock = Users.query.get(id).first()
+    stocks = dict((col, getattr(stock, col)) for col in stock.__table__.columns.keys())
+
+    # stocks = Users.query.get(id)
 
     for stock in stocks:
         temp = lookup(stock['symbol'])
