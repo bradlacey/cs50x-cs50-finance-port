@@ -333,7 +333,7 @@ def login():
             id = item.id
 
         # if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
-        if len(rows) < 1 or not pwd_context.verify(request.form.get("password"), hash):
+        if rows is None or not pwd_context.verify(request.form.get("password"), hash):
             return apology("invalid username and/or password")
 
         # remember which user has logged in
