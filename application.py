@@ -265,8 +265,9 @@ def buy():
         portfolio = 0.0
         grand_total = 0.0
 
-        purchase_datetime = '{date:%Y.%m.%d %H:%M:%S}'.format(date=datetime.datetime.now())
-        return apology(purchase_datetime)
+        purchase_datetime = '{date:%Y.%m.%d_%H:%M:%S}'.format(date=datetime.datetime.now())
+        # debugging
+        # return apology(purchase_datetime)
         # update history
         new_entry = History(id = id, purchase_datetime = purchase_datetime, purchase_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
         db.session.add(new_entry)
