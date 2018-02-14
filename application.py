@@ -342,9 +342,8 @@ def login():
         # ensure username exists and password is correct
         # debugging
 
-        for item in rows:
-            hash = item.hash
-            id = item.id
+        hash = rows.hash
+        id = rows.id
 
         # if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash"]):
         if rows is None or not pwd_context.verify(request.form.get("password"), hash):
@@ -494,10 +493,12 @@ def register():
         if not result:
             return apology("that username is taken")
 
-        # DO WE NEED THIS?
+        # DO WE NEED THIS? We do not! Duplicate entry!
+        """
         new_entry = Users(request.form.get("email"), request.form.get("username"), hash)
         db.session.add(new_entry)
         db.session.commit()
+        """
 
         # remember which user has been created and is logged in
         session['user_id'] = result
