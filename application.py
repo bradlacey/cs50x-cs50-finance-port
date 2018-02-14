@@ -292,7 +292,7 @@ def buy():
         # variable to control index.html
         buying = True
 
-        # return redirect(url_for("index")) #, balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, type = type)
+        # return redirect(url_for("index")) #, balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, transaction_type = transaction_type)
         return render_template("index.html", balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, transaction_type = transaction_type)
 
     # load page as normal
@@ -558,7 +558,7 @@ def sell():
             return apology("you must provide a valid stock symbol")
         if quantity == None:
             return apology("you must provide a valid quantity [0x01]")
-        # return apology(str(type(quantity)))
+        # return apology(str(transaction_type(quantity)))
         quantity = int(quantity)
         if quantity == None or quantity <= 0:
             return apology("you must provide a valid quantity [0x02]")
