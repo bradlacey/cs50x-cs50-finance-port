@@ -152,7 +152,8 @@ def account():
         cash = round(rows.cash, 2)
 
         # ensure username exists and password is correct
-        if len(rows) != 1 or not pwd_context.verify(request.form.get("password_old"), rows[0]["hash"]):
+        # if len(rows) != 1 or not pwd_context.verify(request.form.get("password_old"), rows[0]["hash"]):
+        if rows is None or not pwd_context.verify(request.form.get("password"), hash):
             return apology("you have entered your old password incorrectly")
 
         # encrypt and write new password to database
