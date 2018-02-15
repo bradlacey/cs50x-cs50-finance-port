@@ -302,7 +302,10 @@ def history():
         return apology("there's nothing to show here yet")
     for stock in stocks:
         temp = lookup(stock)
-        current_prices[stock] = usd(float(format(round(temp['price'], 2), '.2f')))
+        if temp is None:
+            # would skipping past or retrying on error be better UX (instead of halting completely)?
+            return apology("an error occurred when retrieving prices. Please try again")
+        current_prices[stock] = usd(round(temp['price'], 2), '.2f')
 
     # replacing this--
     """for row in rows:
