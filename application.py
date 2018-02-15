@@ -100,21 +100,6 @@ def index():
     stock = Users.query.filter_by(id = id).first()
     stocks = Users.query.filter_by(id = id).all()
 
-    # stocks = Users.query.get(id)
-    # TO DO
-    """
-    for stock in stocks:
-        temp = lookup(stock.symbol)
-        stock['current_price'] = temp['price']
-        stock['symbol'] = temp['symbol']
-        stock['stock_name'] = temp['name']
-        # make new 'value' key for each stock
-        stock['value'] = round(stock['current_price'], 2) * round(float(stock['quantity']), 2)
-        # update grand_total
-        portfolio += round(stock['value'], 2)
-        stock['current_price'] = usd(round(float(stock['current_price']), 2))
-        stock['value'] = usd(round(stock['value'], 2))
-    """
     # update grand total
     # grand_total = round(portfolio, 2) + round(cash, 2)
     username = "friend"
@@ -216,9 +201,9 @@ def buy():
             return apology("something happened! Please try again")
         # set values from received
         # stock_name = information['name']
-        price = round(information['price'], 2)
+        ps_price = round(information['price'], 2)
         symbol = information['symbol']
-        cost = round(float(price) * float(quantity), 2)
+        cost = round(float(ps_price) * float(quantity), 2)
 
         # check that the user can afford the quantity requested
         if cost > cash:
@@ -259,7 +244,7 @@ def buy():
         # return apology(timestamp)
 
         # update history
-        update = History(id = id, timestamp = timestamp, ps_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
+        update = History(id = id, timestamp = timestamp, ps_price = ps_price, quantity = quantity, stock = stock, transaction_type = transaction_type)
         db.session.add(update)
         db.session.commit()
 
@@ -351,7 +336,8 @@ def history():
     """
 
     # replacing this--
-    """for row in rows:
+    """
+    for row in rows:
         row['ps_price'] = usd(float(format(round(row['ps_price'], 2), '.2f')))
     """
     # --with this:
@@ -469,7 +455,7 @@ def quote():
             # name = information[row[1]] # name
             name = information['name']
             # price = information[price]
-            price = information['price']
+            ps_price = information['price']
             # symbol = information[row[0].upper()] # symbol
             symbol = information['symbol']
 
@@ -483,7 +469,7 @@ def quote():
         # "when we call render_template() we're allowed to pass in values"
         # return render_template(url_for('quoted')) # , name = name, price = price, symbol = symbol)
         # return redirect("/quoted.html") # , name = name, price = price, symbol = symbol)
-        return render_template("quoted.html", name = name, price = price, symbol = symbol)
+        return render_template("quoted.html", name = name, ps_price = ps_price, symbol = symbol)
 
     # else if user reached route via GET (as by clicking a link or via redirect)
     # When a user visits /quote via GET, render one of those templates, inside of
@@ -610,10 +596,10 @@ def sell():
 
         # set values from received
         name = information['name']
-        price = round(information['price'], 2)
+        ps_price = round(information['price'], 2)
         symbol = information['symbol']
 
-        sale_value = round(Decimal(price) * Decimal(quantity), 2)
+        sale_value = round(Decimal(ps_price) * Decimal(quantity), 2)
 
         # error check
         if quantity_on_hand == None:
