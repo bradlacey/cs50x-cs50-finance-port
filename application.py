@@ -98,7 +98,7 @@ def index():
     # debugging
     # source: https://stackoverflow.com/questions/16947276/flask-sqlalchemy-iterate-column-values-on-a-single-row
     stock = Users.query.filter_by(id = id).first()
-    stocks = dict((col, getattr(stock, col)) for col in stock.__table__.columns.keys())
+    stocks = Users.query.filter_by(id = id).all()
 
     # stocks = Users.query.get(id)
     # TO DO
@@ -245,33 +245,42 @@ def buy():
             new_entry.quantity = new_entry.quantity + int(quantity)
             db.session.commit()
 
-        # populate list of (dicts of) all stocks / quantity owned by current user
-        stocks = Portfolio.query.filter_by(id = id).all()
-
         portfolio = 0.0
         grand_total = 0.0
 
         purchase_datetime = '{date:%Y.%m.%d_%H:%M:%S}'.format(date=datetime.datetime.now())
         # debugging
         # return apology(purchase_datetime)
+
         # update history
-        new_entry = History(id = id, purchase_datetime = purchase_datetime, purchase_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
-        db.session.add(new_entry)
+        stocks = History(id = id, purchase_datetime = purchase_datetime, purchase_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
+        db.session.add(stocks)
         db.session.commit()
 
+
+        # populate list of (dicts of) all stocks / quantity owned by current user
+        stocks = Portfolio.query.filter_by(id = id).all()
+
+        # get current current prices
+        current_price = {}
+
         for stock in stocks:
-            # make new 'current_price' key for each stock
+            # make ...
             temp = lookup(stock.symbol)
-            stock.current_price = temp['price']
+            current_price[stock.symbol] = temp['price']
             stock.symbol = temp['symbol']
-            stock.stock_name = temp['name']
-            stock.value = round(stock.current_price, 2) * round(float(stock.quantity), 2)
+            # stock.stock_name = temp['name']
+            # stock.value = round(stock.current_price, 2) * round(float(stock.quantity), 2)
             # update grand_total
+            # won't I need to do something else with this portfolio variable?
             portfolio += round(stock.value, 2)
-            stock.current_price = usd(round(float(stock.current_price), 2))
-            stock.value = usd(round(stock.value, 2))
+            # unneeded?
+            # stock.current_price = usd(round(float(stock.current_price), 2))
+            # I don't think this ecen exists
+            # stock.value = usd(round(stock.value, 2))
             # update total_owned
-            total_owned += stock.quantity
+            stock.quantity += stock.quantity
+            # db.session.commit()
 
         # update grand total
         grand_total = round(Decimal(portfolio) + Decimal(cash), 2)
@@ -280,7 +289,7 @@ def buy():
         buying = True
 
         # return redirect(url_for("index")) #, balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, transaction_type = transaction_type)
-        return render_template("index.html", balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, transaction_type = transaction_type)
+        return render_template("index.html", balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), current_price = current_price, grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, transaction_type = transaction_type)
 
     # load page as normal
     else:
