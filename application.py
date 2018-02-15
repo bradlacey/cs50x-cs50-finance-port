@@ -631,7 +631,7 @@ def sell():
         grand_total = 0.0
 
         # update history
-        new_entry = History(id = id, sale_price = price, quantity = quantity, stock = name, transaction_type = transaction_type)
+        new_entry = History(id = id, datetime = datetime, sale_price = price, quantity = quantity, stock = name, transaction_type = transaction_type)
         db.session.add(new_entry)
         db.session.commit()
 
