@@ -308,7 +308,7 @@ def history():
         if temp is None:
             # would skipping past or retrying on error be better UX (instead of halting completely)?
             return apology("an error occurred when retrieving prices. Please try again")
-        current_prices[stock] = usd(round(temp['price'], 2), '.2f')
+        current_prices[stock] = usd(round(temp['price'], 2))
 
     # replacing this--
     """for row in rows:
