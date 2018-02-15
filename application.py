@@ -197,6 +197,8 @@ def buy():
         stock = stock.upper()
         information = lookup(stock)
 
+        if not request.form.get("quantity"):
+            return apology("there was an error with the quantity entered. Please try again")
         quantity = int(request.form.get("quantity"))
         total_owned = 0
         transaction_type = "purchase"
