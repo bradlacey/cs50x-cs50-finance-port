@@ -275,9 +275,9 @@ def buy():
         for stock in stocks:
             # make new 'current_price' key for each stock
             temp = lookup(stock.symbol)
-            stock.current_price = temp.price
-            stock.symbol = temp.symbol
-            stock.stock_name = temp.name
+            stock.current_price = temp['price']
+            stock.symbol = temp['symbol']
+            stock.stock_name = temp['name']
             stock.value = round(stock.current_price, 2) * round(float(stock.quantity), 2)
             # update grand_total
             portfolio += round(stock.value, 2)
