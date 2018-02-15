@@ -211,7 +211,7 @@ def buy():
             return apology("you must provide a valid quantity")
         # ensure stock code / lookup is valid
         if information == None:
-            return apology("you must enter a valid stock symbol")
+            return apology("you must enter a valid stock symbol (sometimes this message appears in error!)")
         # set values from received
         stock_name = information['name']
         price = round(information['price'], 2)
@@ -221,24 +221,13 @@ def buy():
         # check that the user can afford the quantity requested
         if cost > cash:
             return apology("your account balance is too low for your intended purchase")
+
         # subtract money from account
-        # db.execute("UPDATE portfolio SET cash = cash - :cost WHERE id = :id")
-        # remove the cost from our cash BOTH in the database and from our variable here
-        # raw SQL
-        # db.execute("UPDATE users SET cash = cash - :cost WHERE id = :id", cost = round(cost, 2), id = id)
-        # Flask-SQLA
         user = Users.query.get(id)
         user.cash = round(Decimal(user.cash) - Decimal(cost), 2)
         db.session.commit()
 
-        # wait, why is this here??
-        # I think I can remove it; we'll see
-        # cash = Decimal(cash) - Decimal(round(cost, 2))
-
-        # rows = Portfolio.query.filter_by(symbol = symbol).get(id)
         test = Portfolio.query.filter_by(id = id, symbol = symbol).first()
-
-        # return apology(test)
 
         if test is None:
             # raw SQL
@@ -257,8 +246,6 @@ def buy():
             db.session.commit()
 
         # populate list of (dicts of) all stocks / quantity owned by current user
-        # debugging
-        # stocks = Portfolio.query.get(id)
         stocks = Portfolio.query.filter_by(id = id).all()
 
         portfolio = 0.0
