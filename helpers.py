@@ -142,7 +142,8 @@ def lookup(symbol):
         }
     except:
     """
-        return apology("there was a fatal error so bad luck eh")
+        return None
+        # return apology("there was a fatal error so bad luck eh")
 
 
 def usd(value):
