@@ -287,7 +287,7 @@ def buy():
             total_owned += stock.quantity
 
         # update grand total
-        grand_total = round(portfolio, 2) + round(cash, 2)
+        grand_total = round(Decimal(portfolio) + Decimal(cash), 2)
 
         # variable to control index.html
         buying = True
