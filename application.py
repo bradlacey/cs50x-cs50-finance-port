@@ -301,7 +301,7 @@ def history():
     if stocks is None:
         return apology("there's nothing to show here yet")
     for stock in stocks:
-        temp = lookup(stock.stock)
+        temp = lookup(stock)
         current_prices[stock] = usd(float(format(round(temp['price'], 2), '.2f')))
 
     # replacing this--
