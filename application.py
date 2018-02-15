@@ -213,7 +213,7 @@ def buy():
             return apology("you must provide a valid quantity")
         # ensure stock code / lookup is valid
         if information == None:
-            return apology("you must enter a valid stock symbol (sometimes this message appears in error!)")
+            return apology("something happened! Please try again")
         # set values from received
         # stock_name = information['name']
         price = round(information['price'], 2)
