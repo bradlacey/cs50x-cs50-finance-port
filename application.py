@@ -275,6 +275,9 @@ def buy():
             # stock.stock_name = temp['name']
             # stock.value = round(stock.current_price, 2) * round(float(stock.quantity), 2)
             # update portfolio for grand_total
+            if temp is None:
+                # would skipping past or retrying on error be better UX (instead of halting completely)?
+                return apology("an error occurred when retrieving prices. Please try again")
             portfolio += round(temp['price'] * stock.quantity, 2)
 
         # update grand total
