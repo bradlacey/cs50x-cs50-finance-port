@@ -33,7 +33,7 @@ def lookup(symbol):
     # reject symbol if it contains comma
     if "," in symbol:
         return None
-    """
+
     # query Yahoo for quote
     # http://stackoverflow.com/a/21351911
     try:
@@ -65,7 +65,6 @@ def lookup(symbol):
 
     except:
         pass
-    """
 
     # query Alpha Vantage for quote instead
     # https://www.alphavantage.co/documentation/
