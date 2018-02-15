@@ -305,7 +305,7 @@ def history():
         if temp is None:
             # would skipping past or retrying on error be better UX (instead of halting completely)?
             return apology("an error occurred when retrieving prices. Please try again")
-        return apology(str(type(current_prices)) + ' ' + str())
+        # return apology(str(type(current_prices)) + ' ' + str())   # dict
         current_prices[stock.stock] = temp['price'] # usd(round(temp['price'], 2))
 
     """
