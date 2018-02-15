@@ -263,7 +263,7 @@ def buy():
         stocks = Portfolio.query.filter_by(id = id).all()
 
         # get current prices
-        current_price = {}
+        current_prices = {}
         portfolio = 0.0
 
         # TO DO
