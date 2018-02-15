@@ -301,6 +301,8 @@ def history():
     if stocks is None:
         return apology("there's nothing to show here yet")
     for stock in stocks:
+        # debugging
+        return apology(type(stock) + ' ' + stock)
         temp = lookup(stock)
         if temp is None:
             # would skipping past or retrying on error be better UX (instead of halting completely)?
