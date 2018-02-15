@@ -277,7 +277,7 @@ def buy():
             # update portfolio for grand_total
             if temp is None:
                 # would skipping past or retrying on error be better UX (instead of halting completely)?
-                return apology("an error occurred when retrieving prices. Please try again")
+                return apology("an error occurred when retrieving the price. Please try again")
             portfolio += round(temp['price'] * stock.quantity, 2)
 
         # update grand total
@@ -601,7 +601,7 @@ def sell():
         if quantity == None or quantity <= 0:
             return apology("you must provide a valid quantity [0x02]")
         if information == None:
-            return apology("you must enter a valid stock symbol (sometimes this message occurs in error!)")
+            return apology("an error occurred when retrieving the price. Please try again")
 
         # set values from received
         name = information['name']
