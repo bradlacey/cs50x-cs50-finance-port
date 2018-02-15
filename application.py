@@ -563,6 +563,7 @@ def sell():
     if request.method == "POST":
 
         # get stock request from user; look up price
+        # could this just be request.form.get("stock").upper() ?
         stock = request.form.get("stock")
         stock = stock.upper()
         quantity = request.form.get("quantity")
@@ -578,10 +579,14 @@ def sell():
             """
             return apology("please log in")
 
-        rows_user = Users.query.filter_by(id = id).all()
-        rows_portfolio = Portfolio.query.filter_by(id = id, symbol = stock).all()
-        cash = round(rows_user[0]['cash'], 2)
-        quantity_on_hand = rows_portfolio[0]['quantity']
+        # rows_user = Users.query.filter_by(id = id).all()
+        rows_user = Users.query.filter.get(id)
+        # rows_portfolio = Portfolio.query.filter_by(id = id, symbol = stock).all()
+        rows_portfolio = Portfolio.query.filter_by(id = id, symbol = stock).first()
+        # cash = round(rows_user[0]['cash'], 2)
+        cash = rows_user.cash
+        # quantity_on_hand = rows_portfolio[0]['quantity']
+        quantity_on_hand = rows_portfolio.quantity
 
         # ensure stock was submitted
         if stock == None:
