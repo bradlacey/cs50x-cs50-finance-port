@@ -540,8 +540,8 @@ def sell():
             """
             return apology("please log in")
 
-        rows_user = Users.query.get(id)
-        rows_portfolio = Portfolio.query.filter_by(Portfolio.symbol == stock).get(id)
+        rows_user = Users.query.filter_by(id = id).all()
+        rows_portfolio = Portfolio.query.filter_by(id = id, symbol = stock).all()
         cash = round(rows_user[0]['cash'], 2)
         quantity_on_hand = rows_portfolio[0]['quantity']
 
@@ -562,7 +562,7 @@ def sell():
         price = round(information['price'], 2)
         symbol = information['symbol']
 
-        sale_value = round(float(price), 2) * round(float(quantity), 2)
+        sale_value = round(Decimal(price) * Decimal(quantity), 2)
 
         # check that the user has enough of the stock to sell
         if quantity > quantity_on_hand or quantity_on_hand == None:
@@ -581,7 +581,7 @@ def sell():
         db.session.commit()
 
         # populate list of (dicts of) all stocks / quantity owned by current user
-        stocks = Portfolio.query.get(id)
+        stocks = Portfolio.query.filter_by(id = id).all()
 
         portfolio = 0.0
         grand_total = 0.0
@@ -595,17 +595,17 @@ def sell():
         for stock in stocks:
             # make new 'current_price' key for each stock
             temp = lookup(stock['stock'])
-            stock['current_price'] = temp['price']
-            stock['symbol'] = temp['symbol']
-            stock['name'] = temp['name']
+            stock.current_price = temp['price']
+            stock.symbol = temp['symbol']
+            stock.name = temp['name']
 
             # make new 'value' key for each stock
-            stock['value'] = stock['current_price'] * float(stock['quantity'])
+            stock.value = stock['current_price'] * float(stock['quantity'])
 
             # update grand_total
             portfolio += stock['value']
-            stock['current_price'] = usd(stock['current_price'])
-            stock['value'] = usd(stock['value'])
+            stock.current_price = usd(stock.current_price)
+            stock.value = usd(stock.value)
 
         # update grand total
         grand_total = portfolio + cash
