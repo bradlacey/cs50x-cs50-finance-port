@@ -580,7 +580,7 @@ def sell():
             return apology("please log in")
 
         # rows_user = Users.query.filter_by(id = id).all()
-        rows_user = Users.query.filter.get(id)
+        rows_user = Users.query.get(id)
         # rows_portfolio = Portfolio.query.filter_by(id = id, symbol = stock).all()
         rows_portfolio = Portfolio.query.filter_by(id = id, symbol = stock).first()
         # cash = round(rows_user[0]['cash'], 2)
