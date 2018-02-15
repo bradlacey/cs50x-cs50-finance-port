@@ -96,6 +96,7 @@ def lookup(symbol):
         }
 
     except:
+    """
         pass
         # return None
 
@@ -140,6 +141,7 @@ def lookup(symbol):
             "symbol": data.upper()
         }
     except:
+    """
         return apology("there was a fatal error so bad luck eh")
 
 
