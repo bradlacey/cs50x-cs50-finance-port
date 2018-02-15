@@ -618,7 +618,7 @@ def sell():
         # remove shares from user's portfolio
         # rows = Portfolio.query.filter_by(id = id, stock = stock).all()
         rows = Portfolio.query.filter_by(id = id, stock = stock).first()
-        rows.quantity = quantity - quantity
+        rows.quantity = rows.quantity - quantity
         db.session.commit()
 
         portfolio = 0.0
