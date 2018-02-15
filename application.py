@@ -635,6 +635,8 @@ def sell():
         portfolio = 0.0
         grand_total = 0.0
 
+        timestamp = '{date:%Y.%m.%d_%H:%M:%S}'.format(date=datetime.datetime.now())
+
         # update history
         new_entry = History(id = id, timestamp = timestamp, sale_price = price, quantity = quantity, stock = name, transaction_type = transaction_type)
         db.session.add(new_entry)
