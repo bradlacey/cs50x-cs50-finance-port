@@ -646,7 +646,7 @@ def sell():
         # variable to control index.html
         selling = True
 
-        return render_template("index.html", balance = usd(cash), cost = usd(sale_value), grand_total = usd(grand_total), portfolio = usd(portfolio), quantity = quantity, timestamp = timestamp, selling = selling, stocks = stocks, symbol = symbol)
+        return render_template("index.html", balance = usd(cash), cost = usd(sale_value), current_prices = current_prices, grand_total = usd(grand_total), portfolio = usd(portfolio), quantity = quantity, timestamp = timestamp, selling = selling, stocks = stocks, symbol = symbol)
 
     # else if GET: load page as normal
     else:
