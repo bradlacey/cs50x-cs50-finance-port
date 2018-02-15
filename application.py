@@ -40,15 +40,15 @@ class History(db.Model):
     uid = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.Integer)
     timestamp = db.Column(db.DateTime, nullable=False)
-    purchase_price = db.Column(db.Numeric, nullable=False)
+    ps_price = db.Column(db.Numeric, nullable=False)
     quantity = db.Column(db.Integer, unique=False, nullable=False)
     stock = db.Column(db.String(80), unique=False, nullable=False)
     transaction_type = db.Column(db.String(12), unique=False, nullable=False)
 
-    def __init__(self, id, timestamp, purchase_price, quantity, stock, transaction_type):
+    def __init__(self, id, timestamp, ps_price, quantity, stock, transaction_type):
         self.id = id
         self.timestamp = timestamp
-        self.purchase_price = purchase_price
+        self.ps_price = ps_price
         self.quantity = quantity
         self.stock = stock
         self.transaction_type = transaction_type
@@ -259,7 +259,7 @@ def buy():
         # return apology(timestamp)
 
         # update history
-        update = History(id = id, timestamp = timestamp, purchase_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
+        update = History(id = id, timestamp = timestamp, ps_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
         db.session.add(update)
         db.session.commit()
 
@@ -352,11 +352,11 @@ def history():
 
     # replacing this--
     """for row in rows:
-        row['purchase_price'] = usd(float(format(round(row['purchase_price'], 2), '.2f')))
+        row['ps_price'] = usd(float(format(round(row['ps_price'], 2), '.2f')))
     """
     # --with this:
     for stock in stocks:
-        stock.purchase_price = usd(float(format(round(stock.purchase_price, 2), '.2f')))
+        stock.ps_price = usd(float(format(round(stock.ps_price, 2), '.2f')))
 
     return render_template("history.html", rows = rows,  current_prices = current_prices)
     # if error:
@@ -641,7 +641,7 @@ def sell():
         timestamp = '{date:%Y.%m.%d_%H:%M:%S}'.format(date=datetime.datetime.now())
 
         # update history
-        new_entry = History(id = id, timestamp = timestamp, sale_price = price, quantity = quantity, stock = name, transaction_type = transaction_type)
+        new_entry = History(id = id, timestamp = timestamp, ps_price = ps_price, quantity = quantity, stock = name, transaction_type = transaction_type)
         db.session.add(new_entry)
         db.session.commit()
 
