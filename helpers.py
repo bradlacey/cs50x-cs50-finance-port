@@ -71,7 +71,6 @@ def lookup(symbol):
     # query Alpha Vantage for quote instead
     # https://www.alphavantage.co/documentation/
     try:
-
         # GET CSV
         url = f"https://www.alphavantage.co/query?apikey=NAJXWIA8D6VN6A3K&datatype=csv&function=TIME_SERIES_INTRADAY&interval=1min&symbol={symbol}"
         webpage = urllib.request.urlopen(url)
