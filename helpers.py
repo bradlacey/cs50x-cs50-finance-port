@@ -133,7 +133,12 @@ def lookup(symbol):
             return type(results)
             for row in results:
                 data += str(row)
-        return data
+        return apology(str(data))
+        return {
+            "name": data.upper(), # for backward compatibility with Yahoo
+            "price": 0, # price,
+            "symbol": data.upper()
+        }
     except:
         return apology("there was a fatal error so bad luck eh")
 
