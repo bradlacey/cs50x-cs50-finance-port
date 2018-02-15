@@ -595,6 +595,9 @@ def sell():
         if information == None:
             return apology("an error occurred when retrieving the price. Please try again")
 
+        # debugging
+        return apology(str(type(information)))
+
         # set values from received
         name = information['name']
         ps_price = round(information['price'], 2)
