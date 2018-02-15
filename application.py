@@ -610,8 +610,11 @@ def sell():
 
         sale_value = round(Decimal(price) * Decimal(quantity), 2)
 
+        # error check
+        if quantity_on_hand == None:
+            return apology("an unknown error has occurred [0x03]. Please try again")
         # check that the user has enough of the stock to sell
-        if quantity > quantity_on_hand or quantity_on_hand == None:
+        if quantity > quantity_on_hand:
             return apology("you cannot sell that which you do not own")
 
         # add cash back to user
