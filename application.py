@@ -302,7 +302,7 @@ def history():
         return apology("there's nothing to show here yet")
     for stock in stocks:
         temp = lookup(stock.stock)
-        current_prices[stock.stock] = usd(float(format(round(temp['price'], 2), '.2f')))
+        current_prices[stock] = usd(float(format(round(temp['price'], 2), '.2f')))
 
     # replacing this--
     """for row in rows:
