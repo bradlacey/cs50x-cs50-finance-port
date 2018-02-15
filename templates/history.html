@@ -14,8 +14,8 @@
                     <td id = "td_06"><b>Quantity</b></td>
                     <td id = "td_06"><b>Transaction Type</b></td>
                     <td id = "td_06" class = "layout_al_r"><b>Current Price</b></td>
-                    <td id = "td_06" class = "layout_al_r"><b>Sale / Purchase Price</b></td>
-                    <td id = "td_06" class = "layout_al_r"><b>Purchase Date / Time</b></td>
+                    <td id = "td_06" class = "layout_al_r"><b>Price</b></td>
+                    <td id = "td_06" class = "layout_al_r"><b>Date / Time</b></td>
                 </tr>
             </thead>
             <tbody>
@@ -27,7 +27,7 @@
                     <td id = "td_06">{{row.transaction_type}}</td>
                     <td id = "td_06" class = "layout_al_r">{{current_prices[row.stock]}}</td>
                     <td id = "td_06" class = "layout_al_r">{{row.purchase_price}}</td>
-                    <td id = "td_06" class = "layout_al_r">{{row.purchase_datetime}}</td>
+                    <td id = "td_06" class = "layout_al_r">{{row.datetime}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -39,15 +39,15 @@ class Users(db.Model):
 class History(db.Model):
     uid = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.Integer)
-    purchase_datetime = db.Column(db.DateTime, nullable=False)
+    datetime = db.Column(db.DateTime, nullable=False)
     purchase_price = db.Column(db.Numeric, nullable=False)
     quantity = db.Column(db.Integer, unique=False, nullable=False)
     stock = db.Column(db.String(80), unique=False, nullable=False)
     transaction_type = db.Column(db.String(12), unique=False, nullable=False)
 
-    def __init__(self, id, purchase_datetime, purchase_price, quantity, stock, transaction_type):
+    def __init__(self, id, datetime, purchase_price, quantity, stock, transaction_type):
         self.id = id
-        self.purchase_datetime = purchase_datetime
+        self.datetime = datetime
         self.purchase_price = purchase_price
         self.quantity = quantity
         self.stock = stock
@@ -249,12 +249,12 @@ def buy():
         portfolio = 0.0
         grand_total = 0.0
 
-        purchase_datetime = '{date:%Y.%m.%d_%H:%M:%S}'.format(date=datetime.datetime.now())
+        datetime = '{date:%Y.%m.%d_%H:%M:%S}'.format(date=datetime.datetime.now())
         # debugging
-        # return apology(purchase_datetime)
+        # return apology(datetime)
 
         # update history
-        update = History(id = id, purchase_datetime = purchase_datetime, purchase_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
+        update = History(id = id, datetime = datetime, purchase_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
         db.session.add(update)
         db.session.commit()
 
@@ -650,7 +650,7 @@ def sell():
         # variable to control index.html
         selling = True
 
-        return render_template("index.html", balance = usd(cash), cost = usd(sale_value), grand_total = usd(grand_total), portfolio = usd(portfolio), quantity = quantity, selling = selling, stocks = stocks, symbol = symbol)
+        return render_template("index.html", balance = usd(cash), cost = usd(sale_value), grand_total = usd(grand_total), portfolio = usd(portfolio), quantity = quantity, datetime = datetime, selling = selling, stocks = stocks, symbol = symbol)
 
     # else if GET: load page as normal
     else:
