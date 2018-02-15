@@ -304,7 +304,7 @@ def history():
         # debugging
         # return apology(str(type(stock)) + ' ' + str(stock) + ' ' + str(stock.stock))
         # => Sorry, <class 'application.History'> <History 8> SNAP.
-        temp = lookup(stock)
+        temp = lookup(stock.stock)
         if temp is None:
             # would skipping past or retrying on error be better UX (instead of halting completely)?
             return apology("an error occurred when retrieving prices. Please try again")
