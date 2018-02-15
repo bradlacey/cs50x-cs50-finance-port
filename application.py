@@ -622,7 +622,8 @@ def sell():
         cash += round(sale_value, 2)
 
         # remove shares from user's portfolio
-        rows = Portfolio.query.filter_by(id = id, stock = stock).all()
+        # rows = Portfolio.query.filter_by(id = id, stock = stock).all()
+        rows = Portfolio.query.filter_by(id = id, stock = stock).first()
         rows.quantity = quantity - quantity
         db.session.commit()
 
