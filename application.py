@@ -638,6 +638,8 @@ def sell():
         # this is code that is duplicated earlier; it needs to be a function
         for stock in stocks:
             temp = lookup(stock.symbol)
+            if not temp:
+                return apology("there was an error looking up the price. Please try again")
             portfolio += round(temp['price'] * stock.quantity, 2)
 
         # update grand total
