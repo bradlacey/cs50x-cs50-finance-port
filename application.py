@@ -225,6 +225,7 @@ def buy():
         # subtract money from account
         user = Users.query.get(id)
         user.cash = round(Decimal(user.cash) - Decimal(cost), 2)
+        cash = round(Decimal(user.cash) - Decimal(cost), 2)
         db.session.commit()
 
         test = Portfolio.query.filter_by(id = id, symbol = symbol).first()
@@ -253,34 +254,28 @@ def buy():
         # return apology(purchase_datetime)
 
         # update history
-        stocks = History(id = id, purchase_datetime = purchase_datetime, purchase_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
-        db.session.add(stocks)
+        update = History(id = id, purchase_datetime = purchase_datetime, purchase_price = price, quantity = quantity, stock = stock, transaction_type = transaction_type)
+        db.session.add(update)
         db.session.commit()
 
 
         # populate list of (dicts of) all stocks / quantity owned by current user
         stocks = Portfolio.query.filter_by(id = id).all()
 
-        # get current current prices
-        current_price = {}
+        # get current prices
+        # current_price = {}
+        portfolio = 0.0
 
+        # TO DO
+        # this is code that is duplicated later; it needs to be a function
         for stock in stocks:
-            # make ...
+            #
             temp = lookup(stock.symbol)
-            current_price[stock.symbol] = temp['price']
-            stock.symbol = temp['symbol']
+            # stock.symbol = temp['symbol']
             # stock.stock_name = temp['name']
             # stock.value = round(stock.current_price, 2) * round(float(stock.quantity), 2)
-            # update grand_total
-            # won't I need to do something else with this portfolio variable?
-            portfolio += round(stock.value, 2)
-            # unneeded?
-            # stock.current_price = usd(round(float(stock.current_price), 2))
-            # I don't think this ecen exists
-            # stock.value = usd(round(stock.value, 2))
-            # update total_owned
-            stock.quantity += stock.quantity
-            # db.session.commit()
+            # update portfolio for grand_total
+            portfolio += round(temp['price'] * stock.quantity, 2)
 
         # update grand total
         grand_total = round(Decimal(portfolio) + Decimal(cash), 2)
@@ -289,7 +284,7 @@ def buy():
         buying = True
 
         # return redirect(url_for("index")) #, balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, transaction_type = transaction_type)
-        return render_template("index.html", balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), current_price = current_price, grand_total = usd(round(grand_total, 2)), portfolio = usd(round(portfolio, 2)), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, transaction_type = transaction_type)
+        return render_template("index.html", balance = usd(round(cash, 2)), buying = buying, cost = usd(round(cost, 2)), current_price = current_price, grand_total = usd(grand_total), portfolio = usd(portfolio), quantity = int(quantity), stocks = stocks, symbol = symbol, total_owned = total_owned, transaction_type = transaction_type)
 
     # load page as normal
     else:
@@ -317,7 +312,39 @@ def history():
         if temp is None:
             # would skipping past or retrying on error be better UX (instead of halting completely)?
             return apology("an error occurred when retrieving prices. Please try again")
-        current_prices[stock] = usd(round(temp['price'], 2))
+        current_prices[stock.stock] = usd(round(temp['price'], 2))
+
+"""
+    # from before
+
+    # populate list of (dicts of) all stocks / quantity owned by current user
+    stocks = Portfolio.query.filter_by(id = id).all()
+
+    # get current current prices
+    current_price = {}
+
+    for stock in stocks:
+        # make ...
+        temp = lookup(stock.symbol)
+        current_price[stock.symbol] = temp['price']
+        stock.symbol = temp['symbol']
+        # stock.stock_name = temp['name']
+        # stock.value = round(stock.current_price, 2) * round(float(stock.quantity), 2)
+        # update grand_total
+        # won't I need to do something else with this portfolio variable?
+        portfolio += round(stock.value, 2)
+        # unneeded?
+        # stock.current_price = usd(round(float(stock.current_price), 2))
+        # I don't think this ecen exists
+        # stock.value = usd(round(stock.value, 2))
+        # update total_owned
+        stock.quantity += stock.quantity
+        # db.session.commit()
+"""
+
+
+
+
 
     # replacing this--
     """for row in rows:
