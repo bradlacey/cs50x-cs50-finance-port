@@ -615,7 +615,7 @@ def sell():
             return apology("an unknown error has occurred [0x03]. Please try again")
         # check that the user has enough of the stock to sell
         if quantity > quantity_on_hand:
-            return apology("you cannot sell that which you do not own")
+            return apology(str(quantity) + " " + str(quantity_on_hand) + " " + "you cannot sell that which you do not own")
 
         # add cash back to user
         user = Users.query.get(id)
