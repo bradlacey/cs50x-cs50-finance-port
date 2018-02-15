@@ -614,12 +614,9 @@ def sell():
         cash += round(sale_value, 2)
 
         # remove shares from user's portfolio
-        user = Users.query.filter_by(stock = stock).get(id)
-        user.quantity = user.quantity - int(quantity)
+        rows = Portfolio.query.filter_by(id = id, stock = stock).all()
+        rows.quantity = rows.quantity - quantity
         db.session.commit()
-
-        # populate list of (dicts of) all stocks / quantity owned by current user
-        stocks = Portfolio.query.filter_by(id = id).all()
 
         portfolio = 0.0
         grand_total = 0.0
@@ -629,24 +626,17 @@ def sell():
         db.session.add(new_entry)
         db.session.commit()
 
-        # fill list so we can populate our HTML table
+        # populate list of (dicts of) all stocks / quantity owned by current user
+        stocks = Portfolio.query.filter_by(id = id).all()
+
+        # TO DO
+        # this is code that is duplicated earlier; it needs to be a function
         for stock in stocks:
-            # make new 'current_price' key for each stock
-            temp = lookup(stock['stock'])
-            stock.current_price = temp['price']
-            stock.symbol = temp['symbol']
-            stock.name = temp['name']
-
-            # make new 'value' key for each stock
-            stock.value = stock['current_price'] * float(stock['quantity'])
-
-            # update grand_total
-            portfolio += stock['value']
-            stock.current_price = usd(stock.current_price)
-            stock.value = usd(stock.value)
+            temp = lookup(stock.symbol)
+            portfolio += round(temp['price'] * stock.quantity, 2)
 
         # update grand total
-        grand_total = portfolio + cash
+        grand_total = round(Decimal(portfolio) + Decimal(cash), 2)
 
         # variable to control index.html
         selling = True
