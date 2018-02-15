@@ -215,7 +215,7 @@ def buy():
         if information == None:
             return apology("you must enter a valid stock symbol (sometimes this message appears in error!)")
         # set values from received
-        stock_name = information['name']
+        # stock_name = information['name']
         price = round(information['price'], 2)
         symbol = information['symbol']
         cost = round(float(price) * float(quantity), 2)
@@ -236,7 +236,9 @@ def buy():
             # raw SQL
             # db.execute("INSERT INTO portfolio (id, quantity, stock, symbol) VALUES (:id, :quantity, :stock_name, :symbol)", id = id, quantity = int(quantity), stock_name = stock_name, symbol = symbol)
             # ORM
-            new_entry = Portfolio(id = id, quantity = int(quantity), stock = stock_name, symbol = symbol)
+            # debugging
+            # quantity is not updating...
+            new_entry = Portfolio(id = id, quantity = quantity, stock = stock, symbol = symbol)
             db.session.add(new_entry)
             db.session.commit()
         # else, if it's there
@@ -245,7 +247,8 @@ def buy():
             # db.execute("UPDATE portfolio SET quantity = quantity + :quantity WHERE id = :id AND stock = :stock_name AND symbol = :symbol", quantity = int(quantity), id = id, stock_name = stock_name, symbol = symbol)
             # Flask-SQLAlchemy
             new_entry = Portfolio.query.filter_by(id = id, stock = stock_name).first()
-            new_entry.quantity = new_entry.quantity + int(quantity)
+            # new_entry.quantity = new_entry.quantity + quantity
+            new_entry.quantity += quantity
             db.session.commit()
 
         portfolio = 0.0
