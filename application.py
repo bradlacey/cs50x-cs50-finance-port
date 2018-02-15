@@ -314,7 +314,7 @@ def history():
             return apology("an error occurred when retrieving prices. Please try again")
         current_prices[stock.stock] = usd(round(temp['price'], 2))
 
-"""
+    """
     # from before
 
     # populate list of (dicts of) all stocks / quantity owned by current user
@@ -340,11 +340,7 @@ def history():
         # update total_owned
         stock.quantity += stock.quantity
         # db.session.commit()
-"""
-
-
-
-
+    """
 
     # replacing this--
     """for row in rows:
