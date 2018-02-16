@@ -566,7 +566,11 @@ def sell():
         information = lookup(stock)
 
         # debugging
-        return apology(str(type(information)))
+        # return apology(str(type(information)))
+        # since the above returns "class 'dict'" the
+        # "string indices must be integers" TypeErrors
+        # are a mystery to me (and they seem to have
+        # stopped as mysteriously as they began)
 
 
         if id == None:
