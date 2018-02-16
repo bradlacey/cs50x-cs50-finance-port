@@ -565,6 +565,10 @@ def sell():
         quantity_on_hand = 0
         information = lookup(stock)
 
+        # debugging
+        return apology(str(type(information)))
+
+
         if id == None:
             """
             i = 0
@@ -594,9 +598,6 @@ def sell():
             return apology("you must provide a valid quantity [0x02]")
         if information == None:
             return apology("an error occurred when retrieving the price. Please try again")
-
-        # debugging
-        return apology(str(type(information)))
 
         # set values from received
         name = information['name']
